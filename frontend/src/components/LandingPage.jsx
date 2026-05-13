@@ -35,17 +35,17 @@ const LandingPage = () => {
       {/* Feature Grid */}
       <section id="features" style={{ padding: '100px 60px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px' }}>
         <div className="glass-card" style={{ padding: '40px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '20px' }}>🖱️</div>
+          <div style={{ fontSize: '2rem', marginBottom: '20px' }}>[CURSOR]</div>
           <h3>Micro-Motion Analysis</h3>
           <p style={{ opacity: 0.6 }}>We track hover hesitation and scroll velocity to understand the user's psychological state.</p>
         </div>
         <div className="glass-card" style={{ padding: '40px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '20px' }}>🧠</div>
+          <div style={{ fontSize: '2rem', marginBottom: '20px' }}>[BRAIN]</div>
           <h3>Predictive Intent</h3>
           <p style={{ opacity: 0.6 }}>AI identifies "Comparison Shopping" vs "High Intent" patterns in real-time.</p>
         </div>
         <div className="glass-card" style={{ padding: '40px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '20px' }}>⚡</div>
+          <div style={{ fontSize: '2rem', marginBottom: '20px' }}>[BOLT]</div>
           <h3>Real-time Concierge</h3>
           <p style={{ opacity: 0.6 }}>MindAI proactively assists users exactly when they need a nudge or a discount.</p>
         </div>

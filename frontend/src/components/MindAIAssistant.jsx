@@ -43,7 +43,7 @@ const MindAIAssistant = ({ sessionId, currentIntent, onSuggestions }) => {
       {isOpen && (
         <div className="ai-chat glass-card">
           <div style={{ marginBottom: '15px', fontWeight: 'bold', borderBottom: '1px solid var(--glass-border)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-             <span style={{ color: 'var(--accent)' }}>●</span> MindAI Concierge
+             <span style={{ color: 'var(--accent)' }}>*</span> MindAI Concierge
           </div>
           <div className="chat-messages">
             {messages.map((m, i) => (
@@ -63,13 +63,13 @@ const MindAIAssistant = ({ sessionId, currentIntent, onSuggestions }) => {
               placeholder="Type a message..."
             />
             <button onClick={handleSend} style={{ background: 'var(--primary)', border: 'none', borderRadius: '12px', padding: '10px 18px', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}>
-              →
+              SEND
             </button>
           </div>
         </div>
       )}
       <div className="ai-bubble" onClick={() => setIsOpen(!isOpen)}>
-        🧠
+        AI
       </div>
     </div>
   );
