@@ -8,7 +8,11 @@ import json
 
 load_dotenv()
 
-app = Flask(__name__, static_folder='frontend/dist', static_url_path='/')
+# Resolve paths relative to this file
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_FOLDER = os.path.join(BASE_DIR, '..', 'frontend', 'dist')
+
+app = Flask(__name__, static_folder=STATIC_FOLDER, static_url_path='/')
 CORS(app)
 
 # Configure Gemini API

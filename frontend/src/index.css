@@ -198,3 +198,16 @@ body {
   padding: 0;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+.landing-page h1 {
+  animation: fadeUp 1s ease-out;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,7 +1,9 @@
 import sqlite3
 import os
 
-DB_PATH = 'aura_shop.db'
+# Resolve database path relative to this file
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, 'aura_shop.db')
 
 def init_db():
     conn = sqlite3.connect(DB_PATH)

@@ -1,0 +1,14 @@
+{
+  "name": "aurashop-ai",
+  "version": "1.0.0",
+  "description": "Predictive AI E-commerce Experience",
+  "main": "app.py",
+  "scripts": {
+    "dev": "npm run dev --prefix frontend",
+    "start": "python backend/app.py",
+    "build": "npm run build --prefix frontend",
+    "install:all": "npm install --prefix frontend && pip install -r backend/requirements.txt"
+  },
+  "author": "Picasso",
+  "license": "ISC"
+}
