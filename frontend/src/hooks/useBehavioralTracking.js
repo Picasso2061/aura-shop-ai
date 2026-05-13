@@ -10,6 +10,9 @@ export const useBehavioralTracking = () => {
   const interactions = useRef([]);
   const lastScrollPos = useRef(0);
 
+  const isFlushing = useRef(false);
+  const scrollTimeout = useRef(null);
+
   useEffect(() => {
     const trackEvent = (type, elementId, data = {}) => {
       const event = {
@@ -21,14 +24,16 @@ export const useBehavioralTracking = () => {
       };
       
       interactions.current.push(event);
-      if (interactions.current.length > 10) {
+      // Auto-flush if buffer gets too large, but only if not already flushing
+      if (interactions.current.length > 20 && !isFlushing.current) {
         flushEvents();
       }
     };
 
     const flushEvents = async () => {
-      if (interactions.current.length === 0) return;
+      if (interactions.current.length === 0 || isFlushing.current) return;
       
+      isFlushing.current = true;
       const eventsToSend = [...interactions.current];
       interactions.current = [];
       
@@ -38,7 +43,6 @@ export const useBehavioralTracking = () => {
           events: eventsToSend
         });
 
-        // Also fetch predicted intent
         const response = await axios.post(`${API_BASE}/predict`, {
           session_id: SESSION_ID,
           interactions: eventsToSend
@@ -46,15 +50,24 @@ export const useBehavioralTracking = () => {
         setIntent(response.data.intent);
       } catch (err) {
         console.error('Tracking failed', err);
+        // Put events back if failed? Maybe too complex for now.
+      } finally {
+        isFlushing.current = false;
       }
     };
 
     const handleScroll = () => {
-      const currentPos = window.scrollY;
-      const velocity = Math.abs(currentPos - lastScrollPos.current);
-      lastScrollPos.current = currentPos;
-      
-      trackEvent('scroll', 'window', { velocity, depth: currentPos });
+      // Throttle scroll events to once every 150ms
+      if (scrollTimeout.current) return;
+
+      scrollTimeout.current = setTimeout(() => {
+        const currentPos = window.scrollY;
+        const velocity = Math.abs(currentPos - lastScrollPos.current);
+        lastScrollPos.current = currentPos;
+        
+        trackEvent('scroll', 'window', { velocity, depth: currentPos });
+        scrollTimeout.current = null;
+      }, 150);
     };
 
     const handleClick = (e) => {
@@ -76,7 +89,7 @@ export const useBehavioralTracking = () => {
         
         hoverTimer = setTimeout(() => {
           trackEvent('hover', currentHoverId, { duration: Date.now() - startTime });
-        }, 1000); // Only track if they hover for at least 1s
+        }, 1500); // Increased to 1.5s to reduce noise
       }
     };
 
@@ -93,7 +106,7 @@ export const useBehavioralTracking = () => {
     window.addEventListener('mouseover', handleMouseOver);
     window.addEventListener('mouseout', handleMouseOut);
 
-    const interval = setInterval(flushEvents, 5000);
+    const interval = setInterval(flushEvents, 8000); // Increased interval to 8s
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -101,6 +114,7 @@ export const useBehavioralTracking = () => {
       window.removeEventListener('mouseover', handleMouseOver);
       window.removeEventListener('mouseout', handleMouseOut);
       clearInterval(interval);
+      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
     };
   }, []);
 
