@@ -16,7 +16,7 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <section style={{ height: '80vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '0 20px' }}>
-        <h1 style={{ fontSize: '5rem', margin: 0, lineHeight: 1.1, background: 'linear-gradient(to bottom, #fff 0%, #999 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+        <h1 className="hero-text" style={{ fontSize: '5rem', margin: 0, lineHeight: 1.1 }}>
           Predicting Desire <br /> Before the Click.
         </h1>
         <p style={{ fontSize: '1.4rem', opacity: 0.6, maxWidth: '700px', marginTop: '30px', lineHeight: 1.6 }}>

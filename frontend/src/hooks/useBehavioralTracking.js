@@ -88,7 +88,6 @@ export const useBehavioralTracking = () => {
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('click', handleClick);
     window.addEventListener('mouseover', handleMouseOver);
@@ -97,7 +96,6 @@ export const useBehavioralTracking = () => {
     const interval = setInterval(flushEvents, 5000);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('click', handleClick);
       window.removeEventListener('mouseover', handleMouseOver);

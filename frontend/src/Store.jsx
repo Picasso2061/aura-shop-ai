@@ -4,12 +4,15 @@ import ProductCard from './components/ProductCard';
 import MindAIAssistant from './components/MindAIAssistant';
 
 const PRODUCTS = [
-  { id: 1, name: 'Neural Watch X', description: 'Real-time biological data streaming.', price: '$299', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400' },
-  { id: 2, name: 'Aura Lens Pro', description: 'Augmented reality redefined.', price: '$899', image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400' },
-  { id: 3, name: 'Sonic Bloom Buds', description: 'Spatial audio with active noise isolation.', price: '$199', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400' },
-  { id: 4, name: 'Glass Pad 14', description: 'The thinnest laptop ever built.', price: '$1299', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400' },
-  { id: 5, name: 'Eco Hub Prime', description: 'Smart home management with AI.', price: '$149', image: 'https://images.unsplash.com/photo-1558002038-1037906d9984?w=400' },
-  { id: 6, name: 'Stealth Controller', description: 'Ultra-low latency gaming gear.', price: '$79', image: 'https://images.unsplash.com/photo-1592840331052-16e15c2c6f95?w=400' },
+  { id: 1, name: 'Neural Watch X', description: 'Real-time biological data streaming with predictive health alerts.', price: '$299', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600' },
+  { id: 2, name: 'Aura Lens Pro', description: 'Augmented reality glasses with neural interface integration.', price: '$899', image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600' },
+  { id: 3, name: 'Sonic Bloom Buds', description: 'Spatial audio with active biological noise isolation.', price: '$199', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600' },
+  { id: 4, name: 'Glass Pad 14', description: 'Molecularly bonded glass chassis with photonic computing.', price: '$1299', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600' },
+  { id: 5, name: 'Eco Hub Prime', description: 'Smart home management powered by localized LLM cores.', price: '$149', image: 'https://images.unsplash.com/photo-1558002038-1037906d9984?w=600' },
+  { id: 6, name: 'Stealth Controller', description: 'Haptic feedback system with sub-millisecond neural latency.', price: '$79', image: 'https://images.unsplash.com/photo-1592840331052-16e15c2c6f95?w=600' },
+  { id: 7, name: 'Void Drone Mini', description: 'Autonomous scouting drone with cloaking technology.', price: '$499', image: 'https://images.unsplash.com/photo-1473960104312-bf9698e4b8af?w=600' },
+  { id: 8, name: 'Prism Key 60', description: 'Mechanical keyboard with liquid crystal keycaps.', price: '$249', image: 'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=600' },
+  { id: 9, name: 'Lumina Desk Lamp', description: 'Circadian-matched lighting with integrated air purifier.', price: '$129', image: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=600' },
 ];
 
 function Store() {

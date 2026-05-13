@@ -25,7 +25,10 @@ const ProductCard = ({ product }) => {
       <img src={product.image} alt={product.name} />
       <h3>{product.name}</h3>
       <p>{product.description}</p>
-      <div className="price">{product.price}</div>
+      <div className="price-tag">
+        <div className="price">{product.price}</div>
+        <button className="buy-btn" style={{ background: 'var(--primary)', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '50px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold' }}>Add to Cart</button>
+      </div>
     </div>
   );
 };

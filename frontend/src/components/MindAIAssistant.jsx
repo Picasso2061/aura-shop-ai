@@ -42,31 +42,34 @@ const MindAIAssistant = ({ sessionId, currentIntent, onSuggestions }) => {
     <div className="ai-assistant">
       {isOpen && (
         <div className="ai-chat glass-card">
-          <div className="messages">
+          <div style={{ marginBottom: '15px', fontWeight: 'bold', borderBottom: '1px solid var(--glass-border)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+             <span style={{ color: 'var(--accent)' }}>●</span> MindAI Concierge
+          </div>
+          <div className="chat-messages">
             {messages.map((m, i) => (
               <div key={i} className={`ai-message ${m.role}`}>
                 {m.content}
               </div>
             ))}
-            {loading && <div className="ai-message bot">Thinking...</div>}
+            {loading && <div className="ai-message bot">Analyzing signals...</div>}
           </div>
-          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+          <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
             <input 
               type="text" 
               value={input} 
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-              style={{ flex: 1, background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '10px', padding: '10px', color: 'white' }}
-              placeholder="Ask me anything..."
+              style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '12px', color: 'white', outline: 'none' }}
+              placeholder="Type a message..."
             />
-            <button onClick={handleSend} style={{ background: 'var(--primary)', border: 'none', borderRadius: '10px', padding: '10px 15px', color: 'white', cursor: 'pointer' }}>
-              Send
+            <button onClick={handleSend} style={{ background: 'var(--primary)', border: 'none', borderRadius: '12px', padding: '10px 18px', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}>
+              →
             </button>
           </div>
         </div>
       )}
       <div className="ai-bubble" onClick={() => setIsOpen(!isOpen)}>
-        <span style={{ fontSize: '1.5rem' }}>🧠</span>
+        🧠
       </div>
     </div>
   );
