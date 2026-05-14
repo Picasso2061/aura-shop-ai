@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import heroImage from '../assets/hero.png';
 
@@ -15,7 +16,7 @@ const LandingPage = () => {
       </nav>
 
       <section style={{ height: '80vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '0 20px', position: 'relative' }}>
-        <img src={heroImage} alt="AuraShop AI Hero" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80%', opacity: 0.1, zIndex: -1, filter: 'blur(5px)' }} />
+        <img src={heroImage} alt="AuraShop AI Hero" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80%', opacity: 0.3, zIndex: -1 }} />
         <h1 className="hero-text" style={{ fontSize: '5rem', margin: 0, lineHeight: 1.1 }}>
           Predicting Desire <br /> Before the Click.
         </h1>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const ProductCard = ({ product, onAddToCart }) => {
+const ProductCard = ({ product, onAddToCart, onViewDetails }) => {
   const [hoverStart, setHoverStart] = useState(null);
 
   const handleMouseEnter = () => {
@@ -21,6 +21,7 @@ const ProductCard = ({ product, onAddToCart }) => {
       data-track-id={`product-${product.id}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onClick={onViewDetails}
     >
       <img src={product.image} alt={product.name} />
       <h3>{product.name}</h3>
