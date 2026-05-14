@@ -16,17 +16,34 @@ const PRODUCTS = [
 ];
 
 function Store() {
-  const { intent, SESSION_ID } = useBehavioralTracking();
-  const [suggestions, setSuggestions] = useState([]);
+  const [cart, setCart] = useState([]);
+  const [lastAdded, setLastAdded] = useState(null);
+
+  const addToCart = (product) => {
+    setCart(prev => [...prev, product]);
+    setLastAdded(product.name);
+    setTimeout(() => setLastAdded(null), 3000);
+  };
 
   const recommendedProducts = PRODUCTS.filter(p => suggestions.includes(p.id));
 
   return (
     <div className="app">
-      <header style={{ padding: '40px', textAlign: 'center' }}>
+      <header style={{ padding: '40px', textAlign: 'center', position: 'relative' }}>
         <h1 style={{ fontSize: '3rem', margin: 0 }}>AURASHOP</h1>
         <p style={{ opacity: 0.6 }}>Predictive AI E-commerce Experience</p>
+        
+        <div className="cart-status glass-card" style={{ position: 'absolute', right: '40px', top: '40px', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '1.2rem' }}>🛒</span>
+          <span style={{ fontWeight: 'bold' }}>{cart.length}</span>
+        </div>
       </header>
+
+      {lastAdded && (
+        <div className="cart-notification glass-card">
+          Added <strong>{lastAdded}</strong> to cart!
+        </div>
+      )}
 
       <div className="intent-badge">
         Intent: {intent}
@@ -40,7 +57,11 @@ function Store() {
           </div>
           <div className="product-grid suggestions">
             {recommendedProducts.map(product => (
-              <ProductCard key={`rec-${product.id}`} product={product} />
+              <ProductCard 
+                key={`rec-${product.id}`} 
+                product={product} 
+                onAddToCart={() => addToCart(product)}
+              />
             ))}
           </div>
         </section>
@@ -50,7 +71,11 @@ function Store() {
         <h2 style={{ opacity: 0.5, fontSize: '1.2rem', marginBottom: '20px' }}>Explore Catalog</h2>
         <div className="product-grid" style={{ padding: 0 }}>
           {PRODUCTS.map(product => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard 
+              key={product.id} 
+              product={product} 
+              onAddToCart={() => addToCart(product)}
+            />
           ))}
         </div>
       </section>

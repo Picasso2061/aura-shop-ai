@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onAddToCart }) => {
   const [hoverStart, setHoverStart] = useState(null);
 
   const handleMouseEnter = () => {
@@ -27,7 +27,17 @@ const ProductCard = ({ product }) => {
       <p>{product.description}</p>
       <div className="price-tag">
         <div className="price">{product.price}</div>
-        <button className="buy-btn" style={{ background: 'var(--primary)', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '50px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold' }}>Add to Cart</button>
+        <button 
+          className="buy-btn" 
+          data-track-id={`add-to-cart-${product.id}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onAddToCart();
+          }}
+          style={{ background: 'var(--primary)', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '50px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold' }}
+        >
+          Add to Cart
+        </button>
       </div>
     </div>
   );

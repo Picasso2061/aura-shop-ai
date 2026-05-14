@@ -275,3 +275,31 @@ html {
   color: #1a1a2e;
 }
 
+.cart-notification {
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 16px 32px;
+  z-index: 1000;
+  border-left: 4px solid var(--primary);
+  animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--text);
+  font-size: 1rem;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translate(-50%, -20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.cart-status {
+  transition: all 0.3s ease;
+}
+
+.cart-status:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(124, 58, 237, 0.15);
+  border-color: var(--primary);
+}
+
