@@ -1,6 +1,7 @@
 {
   "version": 2,
-  "cleanUrls": true,
+  "buildCommand": "npm run build --prefix frontend",
+  "outputDirectory": "frontend/dist",
   "rewrites": [
     {
       "source": "/_/backend/(.*)",
@@ -8,12 +9,7 @@
     },
     {
       "source": "/(.*)",
-      "destination": "/frontend/dist/$1",
-      "check": true
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/frontend/dist/index.html"
+      "destination": "/index.html"
     }
   ]
 }
