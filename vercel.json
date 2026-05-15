@@ -4,6 +4,10 @@
     {
       "source": "/_/backend/(.*)",
       "destination": "/api/index.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/dist/$1"
     }
   ]
 }
