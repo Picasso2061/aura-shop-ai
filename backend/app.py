@@ -25,7 +25,7 @@ else:
     print("WARNING: GEMINI_API_KEY not found in environment variables.")
     model = None
 
-@app.route('/api/register', methods=['POST'])
+@app.route('/_/backend/register', methods=['POST'])
 def register():
     data = request.json
     email = data.get('email')
@@ -40,7 +40,7 @@ def register():
     else:
         return jsonify({"error": "User already exists"}), 400
 
-@app.route('/api/login', methods=['POST'])
+@app.route('/_/backend/login', methods=['POST'])
 def login():
     data = request.json
     email = data.get('email')
@@ -56,7 +56,7 @@ def login():
     else:
         return jsonify({"error": "Invalid credentials"}), 401
 
-@app.route('/api/track', methods=['POST'])
+@app.route('/_/backend/track', methods=['POST'])
 def track_interaction():
     data = request.json
     session_id = data.get('session_id')
@@ -67,7 +67,7 @@ def track_interaction():
     database.log_interaction(session_id, event_type, element_id, extra_data)
     return jsonify({"status": "success"}), 200
 
-@app.route('/api/predict', methods=['POST'])
+@app.route('/_/backend/predict', methods=['POST'])
 def predict_intent():
     data = request.json
     interactions = data.get('interactions', [])
@@ -107,7 +107,7 @@ def predict_intent():
         }
     }), 200
 
-@app.route('/api/chat', methods=['POST'])
+@app.route('/_/backend/chat', methods=['POST'])
 def chat():
     if not model:
         return jsonify({"error": "LLM not configured"}), 500
