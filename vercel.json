@@ -1,16 +1,18 @@
 {
   "version": 2,
+  "cleanUrls": true,
   "rewrites": [
     {
       "source": "/_/backend/(.*)",
       "destination": "/api/index.py"
     },
     {
-      "source": "/assets/(.*)",
-      "destination": "/frontend/dist/assets/$1"
+      "source": "/(.*)",
+      "destination": "/frontend/dist/$1",
+      "check": true
     },
     {
-      "source": "/((?!_/backend|assets).*)",
+      "source": "/(.*)",
       "destination": "/frontend/dist/index.html"
     }
   ]
