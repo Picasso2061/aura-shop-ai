@@ -10,7 +10,7 @@
       "destination": "/frontend/dist/assets/$1"
     },
     {
-      "source": "/((?!_/backend|assets).* )",
+      "source": "/((?!_/backend|assets).*)",
       "destination": "/frontend/dist/index.html"
     }
   ]
