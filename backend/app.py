@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+from werkzeug.security import generate_password_hash, check_password_hash
 import google.generativeai as genai
 from dotenv import load_dotenv
 import database
@@ -23,6 +24,37 @@ if GEMINI_API_KEY:
 else:
     print("WARNING: GEMINI_API_KEY not found in environment variables.")
     model = None
+
+@app.route('/api/register', methods=['POST'])
+def register():
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+    
+    if not email or not password:
+        return jsonify({"error": "Email and password required"}), 400
+        
+    hashed_pw = generate_password_hash(password)
+    if database.create_user(email, hashed_pw):
+        return jsonify({"message": "User created successfully"}), 201
+    else:
+        return jsonify({"error": "User already exists"}), 400
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+    
+    user = database.get_user_by_email(email)
+    if user and check_password_hash(user['password_hash'], password):
+        # In a real app, you'd create a session or JWT here
+        return jsonify({
+            "message": "Login successful",
+            "user": {"email": user['email']}
+        }), 200
+    else:
+        return jsonify({"error": "Invalid credentials"}), 401
 
 @app.route('/api/track', methods=['POST'])
 def track_interaction():

@@ -49,6 +49,18 @@ function Store({ cart, addToCart, removeFromCart }) {
         <h1 style={{ fontSize: '3rem', margin: 0 }}>AURASHOP</h1>
         <p style={{ opacity: 0.6 }}>Predictive AI E-commerce Experience</p>
         
+        <div style={{ position: 'absolute', left: '40px', top: '40px', display: 'flex', gap: '15px' }}>
+          <button 
+            onClick={() => {
+              localStorage.removeItem('user');
+              navigate('/login');
+            }}
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '10px 20px', borderRadius: '12px', cursor: 'pointer', fontSize: '0.9rem' }}
+          >
+            Sign Out
+          </button>
+        </div>
+
         <div 
           className="cart-status glass-card" 
           onClick={() => setIsCartOpen(true)}

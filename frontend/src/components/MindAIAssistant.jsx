@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const API_BASE = '/api';
+const API_BASE = '/_/backend';
 
 const MindAIAssistant = ({ sessionId, currentIntent, onSuggestions }) => {
   const [isOpen, setIsOpen] = useState(false);

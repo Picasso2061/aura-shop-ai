@@ -8,10 +8,16 @@ const LandingPage = () => {
       {/* Navigation */}
       <nav style={{ padding: '30px 60px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ fontSize: '1.5rem', fontWeight: 'bold', letterSpacing: '2px', color: '#1a1a2e' }}>AURA<span style={{ color: 'var(--primary)' }}>AI</span></div>
-        <div style={{ display: 'flex', gap: '30px' }}>
+        <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
           <a href="#features" style={{ color: '#1a1a2e', textDecoration: 'none', opacity: 0.7 }}>Features</a>
-          <a href="#how-it-works" style={{ color: '#1a1a2e', textDecoration: 'none', opacity: 0.7 }}>Technology</a>
-          <Link to="/store" className="glass-card" style={{ padding: '10px 25px', color: 'var(--primary)', textDecoration: 'none', border: '1px solid var(--primary)' }}>Launch Store</Link>
+          {localStorage.getItem('user') ? (
+            <Link to="/store" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 'bold' }}>Go to Store</Link>
+          ) : (
+            <>
+              <Link to="/login" style={{ color: '#1a1a2e', textDecoration: 'none', opacity: 0.7 }}>Sign In</Link>
+              <Link to="/store" className="glass-card" style={{ padding: '10px 25px', color: 'var(--primary)', textDecoration: 'none', border: '1px solid var(--primary)' }}>Launch Store</Link>
+            </>
+          )}
         </div>
       </nav>
 

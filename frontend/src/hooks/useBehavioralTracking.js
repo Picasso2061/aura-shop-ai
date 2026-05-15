@@ -3,7 +3,7 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
 const SESSION_ID = uuidv4();
-const API_BASE = '/api';
+const API_BASE = '/_/backend';
 
 export const useBehavioralTracking = () => {
   const [intent, setIntent] = useState('BROWSING');

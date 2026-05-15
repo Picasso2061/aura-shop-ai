@@ -33,6 +33,15 @@ def init_db():
         )
     ''')
     
+    # Table for Users
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE,
+            password_hash TEXT
+        )
+    ''')
+    
     conn.commit()
     conn.close()
 
@@ -55,6 +64,27 @@ def log_ai_interaction(session_id, user_message, ai_response, intent_prediction)
     ''', (session_id, user_message, ai_response, intent_prediction))
     conn.commit()
     conn.close()
+
+def create_user(email, password_hash):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO users (email, password_hash) VALUES (?, ?)', (email, password_hash))
+        conn.commit()
+        conn.close()
+        return True
+    except sqlite3.IntegrityError:
+        return False
+
+def get_user_by_email(email):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
+    user = cursor.fetchone()
+    conn.close()
+    if user:
+        return {"id": user[0], "email": user[1], "password_hash": user[2]}
+    return None
 
 if __name__ == '__main__':
     init_db()

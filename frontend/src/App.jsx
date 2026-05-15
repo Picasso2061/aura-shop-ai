@@ -4,6 +4,8 @@ import LandingPage from './components/LandingPage';
 import Store from './Store';
 import ThemePreview from './components/ThemePreview';
 import Checkout from './components/Checkout';
+import Login from './components/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   const [cart, setCart] = useState([]);
@@ -21,28 +23,33 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<ProtectedRoute><LandingPage /></ProtectedRoute>} />
         <Route 
           path="/store" 
           element={
-            <Store 
-              cart={cart} 
-              addToCart={addToCart} 
-              removeFromCart={removeFromCart} 
-            />
+            <ProtectedRoute>
+              <Store 
+                cart={cart} 
+                addToCart={addToCart} 
+                removeFromCart={removeFromCart} 
+              />
+            </ProtectedRoute>
           } 
         />
         <Route 
           path="/checkout" 
           element={
-            <Checkout 
-              cart={cart} 
-              removeFromCart={removeFromCart} 
-              clearCart={clearCart}
-            />
+            <ProtectedRoute>
+              <Checkout 
+                cart={cart} 
+                removeFromCart={removeFromCart} 
+                clearCart={clearCart}
+              />
+            </ProtectedRoute>
           } 
         />
         <Route path="/theme-preview" element={<ThemePreview />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   );
