@@ -182,7 +182,10 @@ def serve(path):
     else:
         return send_from_directory(app.static_folder, 'index.html')
 
-database.init_db()
+try:
+    database.init_db()
+except Exception as e:
+    print(f"Database initialization failed: {e}")
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

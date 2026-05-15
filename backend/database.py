@@ -3,7 +3,11 @@ import os
 
 # Resolve database path relative to this file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, 'aura_shop.db')
+
+if os.environ.get('VERCEL'):
+    DB_PATH = '/tmp/aura_shop.db'
+else:
+    DB_PATH = os.path.join(BASE_DIR, 'aura_shop.db')
 
 def init_db():
     conn = sqlite3.connect(DB_PATH)
