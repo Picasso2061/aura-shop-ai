@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, render_template
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 import google.generativeai as genai
@@ -12,23 +12,10 @@ load_dotenv()
 # Resolve paths relative to this file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Check multiple possible locations for the static folder
-POSSIBLE_STATIC_PATHS = [
-    os.path.join(BASE_DIR, '..', 'frontend', 'dist'), # Local dev
-    os.path.join(BASE_DIR, '..'),                      # Vercel deployment (if dist files are at root)
-    os.path.join(os.getcwd(), 'frontend', 'dist'),   # Alternative local
-    os.getcwd()                                       # Fallback to current working directory
-]
-
-STATIC_FOLDER = POSSIBLE_STATIC_PATHS[0]
-for p in POSSIBLE_STATIC_PATHS:
-    if os.path.exists(os.path.join(p, 'index.html')):
-        STATIC_FOLDER = p
-        break
-
-print(f"Using static folder: {STATIC_FOLDER}")
-
-app = Flask(__name__, static_folder=STATIC_FOLDER, static_url_path='/')
+app = Flask(__name__, 
+            static_folder='static',
+            template_folder='templates',
+            static_url_path='')
 CORS(app)
 
 # Configure Gemini API
@@ -195,7 +182,7 @@ def serve(path):
     if path != "" and os.path.exists(app.static_folder + '/' + path):
         return send_from_directory(app.static_folder, path)
     else:
-        return send_from_directory(app.static_folder, 'index.html')
+        return render_template('index.html')
 
 try:
     database.init_db()
