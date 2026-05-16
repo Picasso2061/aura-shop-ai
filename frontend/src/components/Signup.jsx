@@ -15,11 +15,6 @@ const Signup = () => {
     e.preventDefault();
     setError('');
     
-    if (password !== confirmPassword) {
-      setError('Neural confirmation mismatch: Passwords do not match');
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -59,7 +54,7 @@ const Signup = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <label>Neural ID (Email)</label>
+            <label>Email Address</label>
           </div>
           
           <div className="input-container">
@@ -70,27 +65,16 @@ const Signup = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <label>Access Key (Password)</label>
-          </div>
-
-          <div className="input-container">
-            <input 
-              type="password" 
-              placeholder=" "
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-            <label>Confirm Access Key</label>
+            <label>Password</label>
           </div>
           
           <button type="submit" className="signin-button" disabled={loading}>
-            {loading ? 'GENERATING IDENTITY...' : 'CREATE IDENTITY'}
+            {loading ? 'CREATING ACCOUNT...' : 'SIGN UP'}
           </button>
         </form>
 
         <div className="signup-footer">
-          Already verified? <Link to="/login">Authorize Access</Link>
+          Already have an account? <Link to="/login">Sign In</Link>
         </div>
       </div>
     </div>

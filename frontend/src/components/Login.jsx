@@ -67,7 +67,7 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
               required 
             />
-            <label>Neural ID (Email)</label>
+            <label>Email Address</label>
           </div>
           
           <div className="input-container">
@@ -78,19 +78,19 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               required 
             />
-            <label>Access Key (Password)</label>
+            <label>Password</label>
           </div>
 
           <div className="form-utils">
             <label className="remember-me">
               <input type="checkbox" style={{ accentColor: 'var(--primary)' }} />
-              Stay Syncronized
+              Remember Me
             </label>
-            <a href="#reset" className="forgot-pw">Restore Access</a>
+            <a href="#reset" className="forgot-pw">Forgot Password?</a>
           </div>
 
           <button type="submit" className="signin-button" disabled={loading}>
-            {loading ? 'INITIALIZING...' : 'AUTHORIZE ACCESS'}
+            {loading ? 'LOGGING IN...' : 'SIGN IN'}
           </button>
         </form>
 
