@@ -3,6 +3,7 @@ uvicorn
 pydantic[email]
 email-validator
 jinja2
+aiofiles
 flask
 flask-cors
 google-generativeai

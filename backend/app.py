@@ -139,14 +139,18 @@ async def chat(c: Chat):
 # --- SPA SERVING ---
 @app.get("/{path:path}")
 async def serve(request: Request, path: str):
-    full_path = os.path.join(STATIC_DIR, path)
-    if path != "" and os.path.exists(full_path):
-        return FileResponse(full_path)
+    # Determine the file to serve
+    if path == "" or path == "/":
+        file_path = os.path.join(TEMPLATE_DIR, "index.html")
+    else:
+        file_path = os.path.join(STATIC_DIR, path)
+        if not os.path.exists(file_path):
+            file_path = os.path.join(TEMPLATE_DIR, "index.html")
     
-    if templates and os.path.exists(os.path.join(TEMPLATE_DIR, "index.html")):
-        return templates.TemplateResponse("index.html", {"request": request})
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
     
-    return HTMLResponse("<h1>AuraShop AI</h1><p>Backend Active. Frontend assets not found.</p>")
+    return HTMLResponse("<h1>AuraShop AI</h1><p>Backend Active. Frontend assets not found at " + file_path + "</p>")
 
 @app.on_event("startup")
 async def startup():
