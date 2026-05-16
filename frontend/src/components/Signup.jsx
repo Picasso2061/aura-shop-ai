@@ -16,7 +16,7 @@ const Signup = () => {
     setError('');
     
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError('Neural confirmation mismatch: Passwords do not match');
       return;
     }
 
@@ -24,10 +24,9 @@ const Signup = () => {
 
     try {
       await axios.post('/_/backend/register', { email, password });
-      // Redirect to login after successful registration
-      navigate('/login', { state: { message: 'Account created! Please sign in.' } });
+      navigate('/login', { state: { message: 'Identity Created. Please Authorize.' } });
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to create account.');
+      setError(err.response?.data?.detail || 'Registration failed. This Neural ID may already be in use.');
     } finally {
       setLoading(false);
     }
@@ -35,60 +34,63 @@ const Signup = () => {
 
   return (
     <div className="login-container">
-      <div className="animated-bg">
-        <div className="blob"></div>
-        <div className="blob"></div>
-        <div className="blob"></div>
+      {/* Morphing Background */}
+      <div className="background-blobs">
+        <div className="blob blob-1"></div>
+        <div className="blob blob-2"></div>
+        <div className="blob blob-3"></div>
       </div>
       
-      <div className="login-card glass-card">
+      <div className="login-card">
         <div className="login-header">
           <div className="login-logo">AURA<span>AI</span></div>
-          <h2>Join the Future</h2>
-          <p>Create your account to experience predictive shopping.</p>
+          <h1>Join the Future</h1>
+          <p>Create your unique Identity to begin.</p>
         </div>
 
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className="error-toast">{error}</div>}
 
-        <form onSubmit={handleSignup}>
-          <div className="form-group">
-            <label>Email Address</label>
+        <form onSubmit={handleSignup} className="login-form">
+          <div className="input-container">
             <input 
               type="email" 
-              placeholder="name@example.com"
+              placeholder=" "
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
+            <label>Neural ID (Email)</label>
           </div>
-          <div className="form-group">
-            <label>Password</label>
+          
+          <div className="input-container">
             <input 
               type="password" 
-              placeholder="••••••••"
+              placeholder=" "
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <label>Access Key (Password)</label>
           </div>
-          <div className="form-group">
-            <label>Confirm Password</label>
+
+          <div className="input-container">
             <input 
               type="password" 
-              placeholder="••••••••"
+              placeholder=" "
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
+            <label>Confirm Access Key</label>
           </div>
           
-          <button type="submit" className="login-btn" disabled={loading}>
-            {loading ? 'Creating Account...' : 'Create Account'}
+          <button type="submit" className="signin-button" disabled={loading}>
+            {loading ? 'GENERATING IDENTITY...' : 'CREATE IDENTITY'}
           </button>
         </form>
 
-        <div className="login-footer">
-          Already have an account? <Link to="/login">Sign In</Link>
+        <div className="signup-footer">
+          Already verified? <Link to="/login">Authorize Access</Link>
         </div>
       </div>
     </div>

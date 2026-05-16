@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import '../Login.css';
 
@@ -9,6 +9,10 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Show success message from signup if redirecting
+  const successMessage = location.state?.message;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,12 +25,10 @@ const Login = () => {
         password
       });
       
-      console.log('Login success:', response.data);
-      // Store user info in localStorage for demo
       localStorage.setItem('user', JSON.stringify(response.data.user));
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to login. Please try again.');
+      setError(err.response?.data?.detail || 'Identity verification failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
@@ -34,67 +36,78 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <div className="abstract-bg">
-        <div className="circle circle-1"></div>
-        <div className="circle circle-2"></div>
+      {/* Morphing Background */}
+      <div className="background-blobs">
+        <div className="blob blob-1"></div>
+        <div className="blob blob-2"></div>
+        <div className="blob blob-3"></div>
       </div>
       
-      <div className="login-card glass-card">
+      <div className="login-card">
         <div className="login-header">
-          <div className="logo">AURA<span className="accent">AI</span></div>
+          <div className="login-logo">AURA<span>AI</span></div>
           <h1>Welcome Back</h1>
-          <p>The future of shopping awaits your return.</p>
+          <p>Access your predictive shopping terminal.</p>
         </div>
 
-        {error && <div className="error-message" style={{ color: '#ff4d4d', background: 'rgba(255, 77, 77, 0.1)', padding: '10px', borderRadius: '8px', marginBottom: '20px', fontSize: '0.85rem', textAlign: 'center' }}>{error}</div>}
+        {successMessage && (
+          <div className="error-toast" style={{ borderColor: 'var(--primary)', color: 'var(--primary)', background: 'rgba(124, 58, 237, 0.1)' }}>
+            {successMessage}
+          </div>
+        )}
+
+        {error && <div className="error-toast">{error}</div>}
 
         <form onSubmit={handleSubmit} className="login-form">
-          <div className="input-group">
-            <label>Email Address</label>
+          <div className="input-container">
             <input 
               type="email" 
-              placeholder="name@aura.com" 
+              placeholder=" " 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required 
             />
+            <label>Neural ID (Email)</label>
           </div>
           
-          <div className="input-group">
-            <label>Password</label>
+          <div className="input-container">
             <input 
               type="password" 
-              placeholder="••••••••" 
+              placeholder=" " 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required 
             />
+            <label>Access Key (Password)</label>
           </div>
 
-          <div className="form-options">
-            <label className="checkbox-container">
-              <input type="checkbox" />
-              <span className="checkmark"></span>
-              Remember me
+          <div className="form-utils">
+            <label className="remember-me">
+              <input type="checkbox" style={{ accentColor: 'var(--primary)' }} />
+              Stay Syncronized
             </label>
-            <a href="#forgot" className="forgot-link">Forgot Password?</a>
+            <a href="#reset" className="forgot-pw">Restore Access</a>
           </div>
 
-          <button type="submit" className="login-button" disabled={loading}>
-            {loading ? 'SIGNING IN...' : 'SIGN IN'}
+          <button type="submit" className="signin-button" disabled={loading}>
+            {loading ? 'INITIALIZING...' : 'AUTHORIZE ACCESS'}
           </button>
         </form>
 
-        <div className="social-login">
-          <div className="divider"><span>OR CONTINUE WITH</span></div>
-          <div className="social-buttons">
-            <button className="social-btn google">G</button>
-            <button className="social-btn apple">A</button>
+        <div className="social-section">
+          <div className="social-divider"><span>OR CONTINUE WITH</span></div>
+          <div className="social-btns">
+            <button className="social-btn">
+              <span style={{ fontSize: '1.2rem' }}>G</span>
+            </button>
+            <button className="social-btn">
+              <span style={{ fontSize: '1.2rem' }}></span>
+            </button>
           </div>
         </div>
 
-        <p className="signup-text">
-          Don't have an account? <Link to="/signup">Create account</Link>
+        <p className="signup-footer">
+          New to the future? <Link to="/signup">Create Identity</Link>
         </p>
       </div>
     </div>
