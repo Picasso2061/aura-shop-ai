@@ -36,13 +36,13 @@
   height: 500px;
   background: var(--primary);
   border-radius: 50%;
-  opacity: 0.3;
+  opacity: 0.1;
   animation: move 20s infinite alternate;
 }
 
-.blob-1 { top: -100px; right: -100px; background: var(--primary); }
-.blob-2 { bottom: -100px; left: -100px; background: var(--accent); animation-delay: -5s; }
-.blob-3 { top: 50%; left: 50%; width: 300px; height: 300px; background: #3b82f6; animation-duration: 15s; }
+.blob-1 { top: -100px; right: -100px; background: var(--secondary); }
+.blob-2 { bottom: -100px; left: -100px; background: var(--primary); animation-delay: -5s; }
+.blob-3 { top: 50%; left: 50%; width: 300px; height: 300px; background: #bfdbfe; animation-duration: 15s; }
 
 @keyframes move {
   0% { transform: translate(0, 0) scale(1); }
@@ -240,7 +240,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(124, 58, 237, 0.15);
 }
 
 .social-btns {
