@@ -2,11 +2,11 @@
   --primary: #7c3aed;
   --secondary: #a78bfa;
   --accent: #6d28d9;
-  --bg: #030014;
-  --glass: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --text-main: #ffffff;
-  --text-dim: rgba(255, 255, 255, 0.6);
+  --bg: #ffffff;
+  --glass: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(124, 58, 237, 0.1);
+  --text-main: #1f2937;
+  --text-dim: #6b7280;
 }
 
 .login-container {
@@ -125,11 +125,11 @@
 
 .input-container input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
   border-radius: 16px;
   padding: 18px 24px;
-  color: white;
+  color: var(--text-main);
   font-size: 1rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
@@ -250,8 +250,8 @@
 
 .social-btn {
   flex: 1;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   padding: 16px;
   border-radius: 16px;
   cursor: pointer;
@@ -259,12 +259,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text-main);
 }
 
 .social-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: #f9fafb;
+  border-color: var(--primary);
   transform: translateY(-2px);
 }
 
