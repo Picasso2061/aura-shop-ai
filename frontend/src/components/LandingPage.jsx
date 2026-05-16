@@ -1,66 +1,234 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import heroImage from '../assets/hero.png';
+import heroImage from '../assets/hero.png'; // We'll replace this with the generated one in the build step
 
 const LandingPage = () => {
+  const user = JSON.parse(localStorage.getItem('user'));
+
   return (
-    <div className="landing-page">
+    <div className="landing-page" style={{ 
+      background: 'var(--bg)',
+      color: 'var(--text)',
+      minHeight: '100vh',
+      overflowX: 'hidden'
+    }}>
+      {/* Dynamic Background Elements */}
+      <div style={{
+        position: 'fixed',
+        top: '-10%',
+        right: '-10%',
+        width: '60%',
+        height: '60%',
+        background: 'radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%)',
+        zIndex: 0,
+        pointerEvents: 'none'
+      }}></div>
+
       {/* Navigation */}
-      <nav style={{ padding: '30px 60px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', letterSpacing: '2px', color: '#1a1a2e' }}>AURA<span style={{ color: 'var(--primary)' }}>AI</span></div>
-        <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
-          <a href="#features" style={{ color: '#1a1a2e', textDecoration: 'none', opacity: 0.7 }}>Features</a>
-          {localStorage.getItem('user') ? (
-            <Link to="/store" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 'bold' }}>Go to Store</Link>
+      <nav style={{ 
+        padding: '24px 80px', 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        position: 'relative',
+        zIndex: 10
+      }}>
+        <div style={{ 
+          fontSize: '1.8rem', 
+          fontWeight: '900', 
+          letterSpacing: '-1px', 
+          color: 'var(--text)',
+          fontFamily: 'Outfit' 
+        }}>
+          AURA<span style={{ color: 'var(--primary)' }}>AI</span>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '40px', alignItems: 'center' }}>
+          <a href="#features" style={{ color: 'var(--text)', textDecoration: 'none', fontWeight: '500', opacity: 0.7 }}>Platform</a>
+          <a href="#intelligence" style={{ color: 'var(--text)', textDecoration: 'none', fontWeight: '500', opacity: 0.7 }}>Intelligence</a>
+          
+          {user ? (
+            <Link to="/store" className="glass-card" style={{ 
+              padding: '12px 28px', 
+              color: 'var(--primary)', 
+              textDecoration: 'none', 
+              fontWeight: 'bold',
+              borderRadius: '16px'
+            }}>
+              Launch Terminal
+            </Link>
           ) : (
-            <>
-              <Link to="/login" style={{ color: '#1a1a2e', textDecoration: 'none', opacity: 0.7 }}>Sign In</Link>
-              <Link to="/store" className="glass-card" style={{ padding: '10px 25px', color: 'var(--primary)', textDecoration: 'none', border: '1px solid var(--primary)' }}>Launch Store</Link>
-            </>
+            <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+              <Link to="/login" style={{ color: 'var(--text)', textDecoration: 'none', fontWeight: '600' }}>Sign In</Link>
+              <Link to="/signup" style={{ 
+                background: 'var(--primary)', 
+                color: 'white', 
+                padding: '12px 32px', 
+                borderRadius: '16px', 
+                textDecoration: 'none', 
+                fontWeight: 'bold',
+                boxShadow: '0 8px 20px rgba(124, 58, 237, 0.2)'
+              }}>
+                Get Started
+              </Link>
+            </div>
           )}
         </div>
       </nav>
 
-      <section style={{ height: '80vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '0 20px', position: 'relative' }}>
-        <img src={heroImage} alt="AuraShop AI Hero" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80%', opacity: 0.3, zIndex: -1 }} />
-        <h1 className="hero-text" style={{ fontSize: '5rem', margin: 0, lineHeight: 1.1 }}>
-          Predicting Desire <br /> Before the Click.
-        </h1>
-        <p style={{ fontSize: '1.4rem', opacity: 0.6, maxWidth: '700px', marginTop: '30px', lineHeight: 1.6 }}>
-          The world's first e-commerce engine that uses micro-behavioral signals to anticipate user intent with 98% accuracy.
-        </p>
-        <div style={{ marginTop: '50px', display: 'flex', gap: '20px' }}>
-          <Link to="/store" style={{ background: 'var(--primary)', color: 'white', padding: '18px 40px', borderRadius: '50px', textDecoration: 'none', fontSize: '1.1rem', fontWeight: 'bold', boxShadow: '0 10px 30px rgba(157, 80, 187, 0.4)' }}>
-            Experience the Future
-          </Link>
-          <button style={{ background: 'rgba(0,0,0,0.05)', color: '#1a1a2e', padding: '18px 40px', borderRadius: '50px', border: '1px solid rgba(0,0,0,0.1)', cursor: 'pointer', fontSize: '1.1rem' }}>
-            Watch the Film
-          </button>
+      {/* Hero Section */}
+      <header style={{ 
+        padding: '120px 80px 80px',
+        display: 'grid',
+        gridTemplateColumns: '1.2fr 1fr',
+        alignItems: 'center',
+        gap: '60px',
+        position: 'relative',
+        zIndex: 5
+      }}>
+        <div>
+          <div className="ai-badge" style={{ marginBottom: '24px', display: 'inline-block' }}>Proprietary Neural Engine</div>
+          <h1 style={{ 
+            fontSize: '5.5rem', 
+            fontWeight: '800', 
+            lineHeight: '1.05', 
+            margin: '0 0 32px 0',
+            letterSpacing: '-3px'
+          }}>
+            E-Commerce, <br />
+            <span style={{ 
+              background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}>Evolved.</span>
+          </h1>
+          <p style={{ 
+            fontSize: '1.4rem', 
+            lineHeight: '1.6', 
+            opacity: 0.7, 
+            maxWidth: '540px',
+            marginBottom: '48px'
+          }}>
+            AuraShop AI decodes micro-behavioral signals to anticipate customer needs before they search. The future of retail is predictive.
+          </p>
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <Link to="/signup" style={{ 
+              background: 'var(--primary)', 
+              color: 'white', 
+              padding: '20px 48px', 
+              borderRadius: '18px', 
+              textDecoration: 'none', 
+              fontSize: '1.2rem', 
+              fontWeight: '700',
+              boxShadow: '0 15px 35px rgba(124, 58, 237, 0.3)'
+            }}>
+              Begin Your Journey
+            </Link>
+            <Link to="/store" className="glass-card" style={{ 
+              padding: '20px 48px', 
+              color: 'var(--text)', 
+              textDecoration: 'none', 
+              fontSize: '1.2rem', 
+              fontWeight: '700',
+              borderRadius: '18px'
+            }}>
+              Explore Catalog
+            </Link>
+          </div>
         </div>
-      </section>
+        
+        <div style={{ position: 'relative' }}>
+          <div className="glass-card" style={{ 
+            width: '100%', 
+            height: '500px', 
+            overflow: 'hidden',
+            position: 'relative'
+          }}>
+            <img 
+              src={heroImage} 
+              alt="Predictive AI visualization" 
+              style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }} 
+            />
+            <div style={{
+              position: 'absolute',
+              bottom: '30px',
+              left: '30px',
+              right: '30px',
+              padding: '24px',
+              background: 'rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '20px',
+              border: '1px solid rgba(255,255,255,0.2)',
+              color: 'white'
+            }}>
+              <div style={{ fontSize: '0.8rem', textTransform: 'uppercase', opacity: 0.8, marginBottom: '8px' }}>Real-time Signal</div>
+              <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>"High purchase intent detected in Hover Pattern #492"</div>
+            </div>
+          </div>
+        </div>
+      </header>
 
       {/* Feature Grid */}
-      <section id="features" style={{ padding: '100px 60px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px' }}>
-        <div className="glass-card" style={{ padding: '40px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '20px' }}>[CURSOR]</div>
-          <h3>Micro-Motion Analysis</h3>
-          <p style={{ opacity: 0.6 }}>We track hover hesitation and scroll velocity to understand the user's psychological state.</p>
+      <section id="features" style={{ padding: '100px 80px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '80px' }}>
+          <h2 style={{ fontSize: '3rem', fontWeight: '800' }}>The Neural Difference</h2>
+          <p style={{ opacity: 0.6 }}>Three pillars of predictive commerce</p>
         </div>
-        <div className="glass-card" style={{ padding: '40px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '20px' }}>[BRAIN]</div>
-          <h3>Predictive Intent</h3>
-          <p style={{ opacity: 0.6 }}>AI identifies "Comparison Shopping" vs "High Intent" patterns in real-time.</p>
-        </div>
-        <div className="glass-card" style={{ padding: '40px' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '20px' }}>[BOLT]</div>
-          <h3>Real-time Concierge</h3>
-          <p style={{ opacity: 0.6 }}>MindAI proactively assists users exactly when they need a nudge or a discount.</p>
+        
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(3, 1fr)', 
+          gap: '40px' 
+        }}>
+          <div className="glass-card" style={{ padding: '48px', transition: 'transform 0.3s' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '32px' }}>⚡</div>
+            <h3 style={{ fontSize: '1.6rem', marginBottom: '16px' }}>Intent Prediction</h3>
+            <p style={{ opacity: 0.6, lineHeight: '1.6' }}>Our proprietary LLM analyzes mouse velocity and hover duration to categorize intent in milliseconds.</p>
+          </div>
+          
+          <div className="glass-card" style={{ padding: '48px', transition: 'transform 0.3s', border: '1px solid var(--primary)' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '32px' }}>🧠</div>
+            <h3 style={{ fontSize: '1.6rem', marginBottom: '16px' }}>MindAI Concierge</h3>
+            <p style={{ opacity: 0.6, lineHeight: '1.6' }}>A futuristic shopping companion that doesn't wait for questions—it proactively offers solutions.</p>
+          </div>
+          
+          <div className="glass-card" style={{ padding: '48px', transition: 'transform 0.3s' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '32px' }}>💎</div>
+            <h3 style={{ fontSize: '1.6rem', marginBottom: '16px' }}>Dynamic Pricing</h3>
+            <p style={{ opacity: 0.6, lineHeight: '1.6' }}>Personalized value optimization based on behavioral engagement and product scarcity.</p>
+          </div>
         </div>
       </section>
 
+      {/* Trust Bar */}
+      <div style={{ 
+        padding: '60px 80px', 
+        borderTop: '1px solid var(--glass-border)',
+        borderBottom: '1px solid var(--glass-border)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        opacity: 0.5
+      }}>
+        <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>NEURALINK READY</div>
+        <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>SIRIUS CERTIFIED</div>
+        <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>98% ACCURACY</div>
+        <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>SECURE AI</div>
+      </div>
+
       {/* Footer */}
-      <footer style={{ padding: '60px', borderTop: '1px solid rgba(255,255,255,0.05)', textAlign: 'center', opacity: 0.3 }}>
-        &copy; 2026 AuraShop AI Engineering. All rights reserved.
+      <footer style={{ padding: '100px 80px', textAlign: 'center' }}>
+        <div style={{ 
+          fontSize: '1.8rem', 
+          fontWeight: '900', 
+          marginBottom: '40px' 
+        }}>
+          AURA<span style={{ color: 'var(--primary)' }}>AI</span>
+        </div>
+        <div style={{ opacity: 0.4, maxWidth: '600px', margin: '0 auto', fontSize: '0.9rem' }}>
+          &copy; 2026 AuraShop AI Engineering. Powered by Gemini 1.5 Pro. <br />
+          Built for the next generation of digital commerce.
+        </div>
       </footer>
     </div>
   );

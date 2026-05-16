@@ -5,6 +5,7 @@ import Store from './Store';
 import ThemePreview from './components/ThemePreview';
 import Checkout from './components/Checkout';
 import Login from './components/Login';
+import Signup from './components/Signup';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<ProtectedRoute><LandingPage /></ProtectedRoute>} />
+        <Route path="/" element={<LandingPage />} />
         <Route 
           path="/store" 
           element={
@@ -50,6 +51,7 @@ function App() {
         />
         <Route path="/theme-preview" element={<ThemePreview />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
       </Routes>
     </Router>
   );
