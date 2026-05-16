@@ -144,7 +144,11 @@ async def serve(request: Request, path: str):
         file_path = os.path.join(TEMPLATE_DIR, "index.html")
     else:
         file_path = os.path.join(STATIC_DIR, path)
+        
+        # Security: if it's an asset request that doesn't exist, don't serve index.html (prevents MIME errors)
         if not os.path.exists(file_path):
+            if path.startswith("assets/"):
+                return HTMLResponse("Asset not found", status_code=404)
             file_path = os.path.join(TEMPLATE_DIR, "index.html")
     
     if os.path.exists(file_path):
