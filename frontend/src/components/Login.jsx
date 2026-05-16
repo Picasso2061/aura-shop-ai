@@ -46,8 +46,8 @@ const Login = () => {
       <div className="login-card">
         <div className="login-header">
           <div className="login-logo">AURA<span>AI</span></div>
-          <h1>Welcome Back</h1>
-          <p>Access your predictive shopping terminal.</p>
+          <h1>Predictive Shopping</h1>
+          <p>Sign in to your AI-powered terminal.</p>
         </div>
 
         {successMessage && (
