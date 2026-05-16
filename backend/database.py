@@ -1,5 +1,7 @@
 import sqlite3
 import os
+from contextlib import contextmanager
+from typing import Optional, Dict, Any
 
 # Resolve database path relative to this file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -9,87 +11,81 @@ if os.environ.get('VERCEL'):
 else:
     DB_PATH = os.path.join(BASE_DIR, 'aura_shop.db')
 
-def init_db():
+@contextmanager
+def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
-    # Table for logging user interactions
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS interactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-            session_id TEXT,
-            event_type TEXT,
-            element_id TEXT,
-            data TEXT
-        )
-    ''')
-    
-    # Table for AI assistant logs
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS ai_logs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-            session_id TEXT,
-            user_message TEXT,
-            ai_response TEXT,
-            intent_prediction TEXT
-        )
-    ''')
-    
-    # Table for Users
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE,
-            password_hash TEXT
-        )
-    ''')
-    
-    conn.commit()
-    conn.close()
-
-def log_interaction(session_id, event_type, element_id, data):
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-        INSERT INTO interactions (session_id, event_type, element_id, data)
-        VALUES (?, ?, ?, ?)
-    ''', (session_id, event_type, element_id, data))
-    conn.commit()
-    conn.close()
-
-def log_ai_interaction(session_id, user_message, ai_response, intent_prediction):
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-        INSERT INTO ai_logs (session_id, user_message, ai_response, intent_prediction)
-        VALUES (?, ?, ?, ?)
-    ''', (session_id, user_message, ai_response, intent_prediction))
-    conn.commit()
-    conn.close()
-
-def create_user(email, password_hash):
+    conn.row_factory = sqlite3.Row
     try:
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        cursor.execute('INSERT INTO users (email, password_hash) VALUES (?, ?)', (email, password_hash))
-        conn.commit()
+        yield conn
+    finally:
         conn.close()
-        return True
+
+def init_db():
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        
+        # Interactions
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS interactions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                session_id TEXT,
+                event_type TEXT,
+                element_id TEXT,
+                data TEXT
+            )
+        ''')
+        
+        # AI Logs
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS ai_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                session_id TEXT,
+                user_message TEXT,
+                ai_response TEXT,
+                intent_prediction TEXT
+            )
+        ''')
+        
+        # Users
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT UNIQUE,
+                password_hash TEXT
+            )
+        ''')
+        conn.commit()
+
+def log_interaction(session_id: str, event_type: str, element_id: Optional[str], data: str):
+    with get_db_connection() as conn:
+        conn.execute('''
+            INSERT INTO interactions (session_id, event_type, element_id, data)
+            VALUES (?, ?, ?, ?)
+        ''', (session_id, event_type, element_id, data))
+        conn.commit()
+
+def log_ai_interaction(session_id: str, user_message: str, ai_response: str, intent_prediction: str):
+    with get_db_connection() as conn:
+        conn.execute('''
+            INSERT INTO ai_logs (session_id, user_message, ai_response, intent_prediction)
+            VALUES (?, ?, ?, ?)
+        ''', (session_id, user_message, ai_response, intent_prediction))
+        conn.commit()
+
+def create_user(email: str, password_hash: str) -> bool:
+    try:
+        with get_db_connection() as conn:
+            conn.execute('INSERT INTO users (email, password_hash) VALUES (?, ?)', (email, password_hash))
+            conn.commit()
+            return True
     except sqlite3.IntegrityError:
         return False
 
-def get_user_by_email(email):
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
-    user = cursor.fetchone()
-    conn.close()
-    if user:
-        return {"id": user[0], "email": user[1], "password_hash": user[2]}
+def get_user_by_email(email: str) -> Optional[Dict[str, Any]]:
+    with get_db_connection() as conn:
+        user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
+        if user:
+            return dict(user)
     return None
-
-if __name__ == '__main__':
-    init_db()
-    print("Database initialized.")

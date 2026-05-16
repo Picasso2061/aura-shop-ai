@@ -1,5 +1,10 @@
+fastapi
+uvicorn
+pydantic[email]
+jinja2
 flask
 flask-cors
 google-generativeai
 python-dotenv
 gunicorn
+mangum
