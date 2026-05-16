@@ -5,6 +5,12 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from backend.main import app
+from mangum import Mangum
 
-# This is the entry point for Vercel
-# Vercel's Python runtime will look for the 'app' variable
+# Export the handler for Vercel
+handler = Mangum(app)
+
+# Vercel's Python runtime will look for the 'app' variable, 
+# but Mangum handler is often more reliable for FastAPI.
+# Let's keep both.
+app = handler

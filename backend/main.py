@@ -1,14 +1,15 @@
 import os
-from fastapi import FastAPI, Request, HTTPException, Depends
-from fastapi.responses import HTMLResponse, JSONResponse
+import json
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from werkzeug.security import generate_password_hash, check_password_hash
+
 import database
-from .schemas.models import UserRegister, UserLogin, InteractionData, PredictionRequest, ChatRequest
-from .services.ai_service import ai_service
-import json
+from backend.schemas.models import UserRegister, UserLogin, InteractionData, PredictionRequest, ChatRequest
+from backend.services.ai_service import ai_service
 
 app = FastAPI(title="AuraShop AI API", version="2.0.0")
 
@@ -20,17 +21,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 # Resolve paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
 
-# Mount Static Files
+# Mount Static Files with safety
 if os.path.exists(STATIC_DIR):
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-templates = Jinja2Templates(directory=TEMPLATE_DIR)
+# Templates with safety
+if os.path.exists(TEMPLATE_DIR):
+    templates = Jinja2Templates(directory=TEMPLATE_DIR)
+else:
+    templates = None
 
 @app.post("/_/backend/register")
 async def register(user: UserRegister):
@@ -93,7 +97,10 @@ async def serve_spa(request: Request, path: str):
         return FileResponse(static_file_path)
     
     # Otherwise return index.html
-    return templates.TemplateResponse("index.html", {"request": request})
+    if templates:
+        return templates.TemplateResponse("index.html", {"request": request})
+    else:
+        return HTMLResponse("<h1>Backend is running, but frontend assets are missing.</h1><p>Please run the build and sync steps.</p>")
 
 # Database Init
 @app.on_event("startup")
