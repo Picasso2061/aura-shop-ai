@@ -59,7 +59,7 @@ const MindAIAssistant = ({ sessionId, currentIntent, onSuggestions }) => {
               value={input} 
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-              style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '12px', color: 'white', outline: 'none' }}
+              style={{ flex: 1, background: 'rgba(0,0,0,0.03)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '12px', color: 'var(--text)', outline: 'none' }}
               placeholder="Type a message..."
             />
             <button onClick={handleSend} style={{ background: 'var(--primary)', border: 'none', borderRadius: '12px', padding: '10px 18px', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}>
