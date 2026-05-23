@@ -44,7 +44,7 @@ def seed_products():
             adjectives = ["Neural", "Quantum", "Cyber", "Holo", "Plasma", "Aero", "Void", "Flux", "Neon", "Sonic", "Aura", "Prism", "Zenith", "Pulse", "Nova", "Stealth", "Orbit"]
             nouns = ["Drive", "Core", "Matrix", "Lens", "Suit", "Drone", "Pad", "Ring", "Projector", "Interface", "Watch", "Buds", "Hub", "Controller", "Key", "Lamp", "Chair"]
             products_to_insert = []
-            for i in range(1, 1001):
+            for i in range(1, 51):
                 name = f"{random.choice(adjectives)} {random.choice(nouns)} {random.randint(1, 99)}"
                 desc = f"A state-of-the-art {name.lower()} with enhanced capabilities."
                 price = f"${random.randint(49, 4999)}"
