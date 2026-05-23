@@ -2,6 +2,7 @@ import sqlite3
 import os
 from contextlib import contextmanager
 from typing import Optional, Dict, Any
+import random
 
 # Resolve database path relative to this file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -56,7 +57,41 @@ def init_db():
                 password_hash TEXT
             )
         ''')
+        
+        # Products
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS products (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                description TEXT,
+                price TEXT,
+                image TEXT
+            )
+        ''')
         conn.commit()
+
+def seed_products():
+    with get_db_connection() as conn:
+        count = conn.execute('SELECT COUNT(*) as count FROM products').fetchone()['count']
+        if count == 0:
+            print("Seeding 1000 products...")
+            adjectives = ["Neural", "Quantum", "Cyber", "Holo", "Plasma", "Aero", "Void", "Flux", "Neon", "Sonic", "Aura", "Prism", "Zenith", "Pulse", "Nova", "Stealth", "Orbit"]
+            nouns = ["Drive", "Core", "Matrix", "Lens", "Suit", "Drone", "Pad", "Ring", "Projector", "Interface", "Watch", "Buds", "Hub", "Controller", "Key", "Lamp", "Chair"]
+            
+            products_to_insert = []
+            for i in range(1, 1001):
+                name = f"{random.choice(adjectives)} {random.choice(nouns)} {random.randint(1, 99)}"
+                desc = f"A state-of-the-art {name.lower()} with enhanced capabilities."
+                price = f"${random.randint(49, 4999)}"
+                image = f"https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80&sig={i}"
+                products_to_insert.append((name, desc, price, image))
+            
+            conn.executemany('''
+                INSERT INTO products (name, description, price, image)
+                VALUES (?, ?, ?, ?)
+            ''', products_to_insert)
+            conn.commit()
+            print("Seeding complete.")
 
 def log_interaction(session_id: str, event_type: str, element_id: Optional[str], data: str):
     with get_db_connection() as conn:

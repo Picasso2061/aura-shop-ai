@@ -1,26 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useBehavioralTracking } from './hooks/useBehavioralTracking';
 import ProductCard from './components/ProductCard';
 import MindAIAssistant from './components/MindAIAssistant';
 
-const PRODUCTS = [
-  { id: 1, name: 'Neural Watch X', description: 'Real-time biological data streaming with predictive health alerts.', price: '$299', image: '/images/watch.png' },
-  { id: 2, name: 'Aura Lens Pro', description: 'Augmented reality glasses with neural interface integration.', price: '$899', image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600' },
-  { id: 3, name: 'Sonic Bloom Buds', description: 'Spatial audio with active biological noise isolation.', price: '$199', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600' },
-  { id: 4, name: 'Glass Pad 14', description: 'Molecularly bonded glass chassis with photonic computing.', price: '$1299', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600' },
-  { id: 5, name: 'Eco Hub Prime', description: 'Smart home management powered by localized LLM cores.', price: '$149', image: 'https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?w=600' },
-  { id: 6, name: 'Stealth Controller', description: 'Haptic feedback system with sub-millisecond neural latency.', price: '$79', image: 'https://images.unsplash.com/photo-1592840331052-16e15c2c6f95?w=600' },
-  { id: 7, name: 'Void Drone Mini', description: 'Autonomous scouting drone with cloaking technology.', price: '$499', image: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=600' },
-  { id: 8, name: 'Prism Key 60', description: 'Mechanical keyboard with liquid crystal keycaps.', price: '$249', image: 'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=600' },
-  { id: 9, name: 'Lumina Desk Lamp', description: 'Circadian-matched lighting with integrated air purifier.', price: '$129', image: 'https://images.unsplash.com/photo-1534073828943-f801091bb18c?w=600' },
-  { id: 10, name: 'Aura Suit G1', description: 'Molecularly thin kinetic absorption suit with thermal regulation.', price: '$2499', image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600' },
-  { id: 11, name: 'Orbit Lens Mini', description: 'Satellite-linked vision enhancer with real-time HUD.', price: '$649', image: 'https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=600' },
-  { id: 12, name: 'Zenith Chair', description: 'Zero-gravity workstation with neural posture correction.', price: '$3200', image: 'https://images.unsplash.com/photo-1519947486511-46149fa0a254?w=600' },
-  { id: 13, name: 'Vortex Cooling Pad', description: 'Photonic heat dissipation for high-end computing arrays.', price: '$89', image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=600' },
-  { id: 14, name: 'Pulse Sync Ring', description: 'Bio-rhythm synchronized wellness tracker in titanium.', price: '$179', image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600' },
-  { id: 15, name: 'Nova Projector', description: '8K holographic spatial projection system for neural cinema.', price: '$1599', image: 'https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=600' },
-];
+
 
 function Store({ cart, addToCart, removeFromCart }) {
   const navigate = useNavigate();
@@ -29,6 +14,25 @@ function Store({ cart, addToCart, removeFromCart }) {
   const [lastAdded, setLastAdded] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+
+  React.useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(`/_/backend/products?limit=50&offset=${page * 50}`);
+        if (response.data.length < 50) setHasMore(false);
+        setProducts(prev => {
+          const newProducts = response.data.filter(p => !prev.some(existing => existing.id === p.id));
+          return [...prev, ...newProducts];
+        });
+      } catch (err) {
+        console.error("Failed to fetch products", err);
+      }
+    };
+    fetchProducts();
+  }, [page]);
 
   React.useEffect(() => {
     if (trackedSuggestions && trackedSuggestions.length > 0) {
@@ -47,7 +51,7 @@ function Store({ cart, addToCart, removeFromCart }) {
     return sum + price;
   }, 0);
 
-  const recommendedProducts = PRODUCTS.filter(p => suggestions.includes(p.id));
+  const recommendedProducts = products.filter(p => suggestions.some(id => Number(id) === p.id));
 
   return (
     <div className="app">
@@ -109,7 +113,7 @@ function Store({ cart, addToCart, removeFromCart }) {
       <section style={{ padding: '0 40px' }}>
         <h2 style={{ opacity: 0.5, fontSize: '1.2rem', marginBottom: '20px' }}>Explore Catalog</h2>
         <div className="product-grid" style={{ padding: 0 }}>
-          {PRODUCTS.map(product => (
+          {products.map(product => (
             <ProductCard 
               key={product.id} 
               product={product} 
@@ -118,6 +122,17 @@ function Store({ cart, addToCart, removeFromCart }) {
             />
           ))}
         </div>
+        {hasMore && (
+          <div style={{ textAlign: 'center', marginTop: '40px' }}>
+            <button 
+              className="buy-btn"
+              onClick={() => setPage(prev => prev + 1)}
+              style={{ background: 'rgba(255,255,255,0.1)', padding: '15px 30px', fontSize: '1.1rem', cursor: 'pointer', borderRadius: '50px', border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
+            >
+              Load More Products
+            </button>
+          </div>
+        )}
       </section>
 
       <MindAIAssistant 

@@ -15,25 +15,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# --- DATABASE LOGIC ---
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = '/tmp/aura_shop.db' if os.environ.get('VERCEL') else os.path.join(BASE_DIR, 'aura_shop.db')
-
-@contextmanager
-def get_db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    try:
-        yield conn
-    finally:
-        conn.close()
-
-def init_db():
-    with get_db() as conn:
-        conn.execute('CREATE TABLE IF NOT EXISTS interactions (id INTEGER PRIMARY KEY AUTOINCREMENT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, session_id TEXT, event_type TEXT, element_id TEXT, data TEXT)')
-        conn.execute('CREATE TABLE IF NOT EXISTS ai_logs (id INTEGER PRIMARY KEY AUTOINCREMENT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, session_id TEXT, user_message TEXT, ai_response TEXT, intent_prediction TEXT)')
-        conn.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT UNIQUE, password_hash TEXT)')
-        conn.commit()
+from database import init_db, seed_products, get_db_connection as get_db
 
 # --- SCHEMAS ---
 class UserAuth(BaseModel):
@@ -70,26 +52,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
     ai_model = genai.GenerativeModel('gemini-1.5-flash')
-else:
-    ai_model = None
 
-PRODUCTS = [
-  { "id": 1, "name": "Neural Watch X", "description": "Real-time biological data streaming with predictive health alerts." },
-  { "id": 2, "name": "Aura Lens Pro", "description": "Augmented reality glasses with neural interface integration." },
-  { "id": 3, "name": "Sonic Bloom Buds", "description": "Spatial audio with active biological noise isolation." },
-  { "id": 4, "name": "Glass Pad 14", "description": "Molecularly bonded glass chassis with photonic computing." },
-  { "id": 5, "name": "Eco Hub Prime", "description": "Smart home management powered by localized LLM cores." },
-  { "id": 6, "name": "Stealth Controller", "description": "Haptic feedback system with sub-millisecond neural latency." },
-  { "id": 7, "name": "Void Drone Mini", "description": "Autonomous scouting drone with cloaking technology." },
-  { "id": 8, "name": "Prism Key 60", "description": "Mechanical keyboard with liquid crystal keycaps." },
-  { "id": 9, "name": "Lumina Desk Lamp", "description": "Circadian-matched lighting with integrated air purifier." },
-  { "id": 10, "name": "Aura Suit G1", "description": "Molecularly thin kinetic absorption suit with thermal regulation." },
-  { "id": 11, "name": "Orbit Lens Mini", "description": "Satellite-linked vision enhancer with real-time HUD." },
-  { "id": 12, "name": "Zenith Chair", "description": "Zero-gravity workstation with neural posture correction." },
-  { "id": 13, "name": "Vortex Cooling Pad", "description": "Photonic heat dissipation for high-end computing arrays." },
-  { "id": 14, "name": "Pulse Sync Ring", "description": "Bio-rhythm synchronized wellness tracker in titanium." },
-  { "id": 15, "name": "Nova Projector", "description": "8K holographic spatial projection system for neural cinema." },
-]
 
 # Paths
 STATIC_DIR = os.path.join(BASE_DIR, "static")
@@ -120,6 +83,12 @@ async def login(user: UserAuth):
             return {"message": "ok", "user": {"email": row['email']}}
     raise HTTPException(status_code=401, detail="Invalid")
 
+@app.get("/_/backend/products")
+async def get_products(limit: int = 50, offset: int = 0):
+    with get_db() as conn:
+        rows = conn.execute('SELECT * FROM products LIMIT ? OFFSET ?', (limit, offset)).fetchall()
+        return [dict(row) for row in rows]
+
 @app.post("/_/backend/track")
 async def track(i: Interaction):
     with get_db() as conn:
@@ -138,8 +107,7 @@ async def predict(p: Prediction):
             events_str = json.dumps([{k: v for k, v in i.items() if k in ['event_type', 'element_id', 'data']} for i in p.interactions[-10:]])
             prompt = f"""
 Analyze these recent user interactions on an e-commerce store: {events_str}
-Available products: {json.dumps(PRODUCTS)}
-Predict their intent (e.g., 'BROWSING', 'COMPARING', 'SEARCHING') and suggest up to 3 product IDs they might be interested in based on elements they interacted with.
+Predict their intent (e.g., 'BROWSING', 'COMPARING', 'SEARCHING') and suggest up to 3 product IDs they might be interested in based on elements they interacted with. Assume valid IDs are between 1 and 1000.
 Respond in valid JSON format ONLY: {{"intent": "intent_string", "suggested_product_ids": [id1, id2]}}
 """
             res = ai_model.generate_content(prompt).text
@@ -150,9 +118,19 @@ Respond in valid JSON format ONLY: {{"intent": "intent_string", "suggested_produ
             suggestions = data.get("suggested_product_ids", [])
         except Exception as e:
             print("AI Prediction error:", e)
+            # Mock fallback
+            import random
             hovers = [i for i in p.interactions if i.get('event_type') == 'hover']
             max_h = max([h.get('data', {}).get('duration', 0) for h in hovers]) if hovers else 0
             if max_h > 3000: intent = "COMPARING"
+            suggestions = [random.randint(1, 1000) for _ in range(3)]
+    else:
+        # Mock fallback if no API key
+        import random
+        hovers = [i for i in p.interactions if i.get('event_type') == 'hover']
+        max_h = max([h.get('data', {}).get('duration', 0) for h in hovers]) if hovers else 0
+        if max_h > 3000: intent = "COMPARING"
+        suggestions = [random.randint(1, 1000) for _ in range(3)]
 
     return {"intent": intent, "suggestions": suggestions}
 
@@ -196,6 +174,7 @@ async def serve(request: Request, path: str):
 @app.on_event("startup")
 async def startup():
     init_db()
+    seed_products()
     
     from werkzeug.security import generate_password_hash
     seed_users = [
