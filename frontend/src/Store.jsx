@@ -51,7 +51,7 @@ function Store({ cart, addToCart, removeFromCart }) {
     return sum + price;
   }, 0);
 
-  const recommendedProducts = products.filter(p => suggestions.some(id => Number(id) === p.id));
+  const recommendedProducts = products.filter(p => Array.isArray(suggestions) && suggestions.some(id => Number(id) === p.id));
 
   return (
     <div className="app">

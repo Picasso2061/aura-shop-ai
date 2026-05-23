@@ -144,7 +144,7 @@ async def predict(p: Prediction):
             events_str = json.dumps([{k: v for k, v in i.items() if k in ['event_type', 'element_id', 'data']} for i in p.interactions[-10:]])
             prompt = f"""
 Analyze these recent user interactions on an e-commerce store: {events_str}
-Predict their intent (e.g., 'BROWSING', 'COMPARING', 'SEARCHING') and suggest up to 3 product IDs they might be interested in based on elements they interacted with. Assume valid IDs are between 1 and 1000.
+Predict their intent (e.g., 'BROWSING', 'COMPARING', 'SEARCHING') and suggest up to 3 product IDs they might be interested in based on elements they interacted with. Assume valid IDs are between 1 and 50.
 Respond in valid JSON format ONLY: {{"intent": "intent_string", "suggested_product_ids": [id1, id2]}}
 """
             res = ai_model.generate_content(prompt).text
@@ -160,14 +160,14 @@ Respond in valid JSON format ONLY: {{"intent": "intent_string", "suggested_produ
             hovers = [i for i in p.interactions if i.get('event_type') == 'hover']
             max_h = max([h.get('data', {}).get('duration', 0) for h in hovers]) if hovers else 0
             if max_h > 3000: intent = "COMPARING"
-            suggestions = [random.randint(1, 1000) for _ in range(3)]
+            suggestions = [random.randint(1, 50) for _ in range(3)]
     else:
         # Mock fallback if no API key
         import random
         hovers = [i for i in p.interactions if i.get('event_type') == 'hover']
         max_h = max([h.get('data', {}).get('duration', 0) for h in hovers]) if hovers else 0
         if max_h > 3000: intent = "COMPARING"
-        suggestions = [random.randint(1, 1000) for _ in range(3)]
+        suggestions = [random.randint(1, 50) for _ in range(3)]
 
     return {"intent": intent, "suggestions": suggestions}
 
