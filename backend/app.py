@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from database import init_db, seed_products, get_db_connection as get_db
+from backend.database import init_db, seed_products, get_db_connection as get_db
 
 # --- SCHEMAS ---
 class UserAuth(BaseModel):
@@ -171,8 +171,8 @@ async def serve(request: Request, path: str):
     
     return HTMLResponse("<h1>AuraShop AI</h1><p>Backend Active. Frontend assets not found at " + file_path + "</p>")
 
-@app.on_event("startup")
-async def startup():
+# --- INITIALIZATION (Safe for Serverless Cold Starts) ---
+try:
     init_db()
     seed_products()
     
@@ -192,3 +192,5 @@ async def startup():
                 )
                 db.commit()
                 print(f"Seed user created: {email}")
+except Exception as e:
+    print("Error initializing DB:", e)
