@@ -24,11 +24,17 @@ const PRODUCTS = [
 
 function Store({ cart, addToCart, removeFromCart }) {
   const navigate = useNavigate();
-  const { intent, SESSION_ID } = useBehavioralTracking();
+  const { intent, SESSION_ID, suggestions: trackedSuggestions } = useBehavioralTracking();
   const [suggestions, setSuggestions] = useState([]);
   const [lastAdded, setLastAdded] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  React.useEffect(() => {
+    if (trackedSuggestions && trackedSuggestions.length > 0) {
+      setSuggestions(trackedSuggestions);
+    }
+  }, [trackedSuggestions]);
 
   const handleAddToCart = (product) => {
     addToCart(product);

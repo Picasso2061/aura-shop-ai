@@ -73,6 +73,24 @@ if GEMINI_API_KEY:
 else:
     ai_model = None
 
+PRODUCTS = [
+  { "id": 1, "name": "Neural Watch X", "description": "Real-time biological data streaming with predictive health alerts." },
+  { "id": 2, "name": "Aura Lens Pro", "description": "Augmented reality glasses with neural interface integration." },
+  { "id": 3, "name": "Sonic Bloom Buds", "description": "Spatial audio with active biological noise isolation." },
+  { "id": 4, "name": "Glass Pad 14", "description": "Molecularly bonded glass chassis with photonic computing." },
+  { "id": 5, "name": "Eco Hub Prime", "description": "Smart home management powered by localized LLM cores." },
+  { "id": 6, "name": "Stealth Controller", "description": "Haptic feedback system with sub-millisecond neural latency." },
+  { "id": 7, "name": "Void Drone Mini", "description": "Autonomous scouting drone with cloaking technology." },
+  { "id": 8, "name": "Prism Key 60", "description": "Mechanical keyboard with liquid crystal keycaps." },
+  { "id": 9, "name": "Lumina Desk Lamp", "description": "Circadian-matched lighting with integrated air purifier." },
+  { "id": 10, "name": "Aura Suit G1", "description": "Molecularly thin kinetic absorption suit with thermal regulation." },
+  { "id": 11, "name": "Orbit Lens Mini", "description": "Satellite-linked vision enhancer with real-time HUD." },
+  { "id": 12, "name": "Zenith Chair", "description": "Zero-gravity workstation with neural posture correction." },
+  { "id": 13, "name": "Vortex Cooling Pad", "description": "Photonic heat dissipation for high-end computing arrays." },
+  { "id": 14, "name": "Pulse Sync Ring", "description": "Bio-rhythm synchronized wellness tracker in titanium." },
+  { "id": 15, "name": "Nova Projector", "description": "8K holographic spatial projection system for neural cinema." },
+]
+
 # Paths
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
@@ -112,12 +130,31 @@ async def track(i: Interaction):
 
 @app.post("/_/backend/predict")
 async def predict(p: Prediction):
-    # Dynamic intent logic
     intent = "BROWSING"
-    hovers = [i for i in p.interactions if i.get('event_type') == 'hover']
-    max_h = max([h.get('data', {}).get('duration', 0) for h in hovers]) if hovers else 0
-    if max_h > 3000: intent = "COMPARING"
-    return {"intent": intent}
+    suggestions = []
+    
+    if ai_model and p.interactions:
+        try:
+            events_str = json.dumps([{k: v for k, v in i.items() if k in ['event_type', 'element_id', 'data']} for i in p.interactions[-10:]])
+            prompt = f"""
+Analyze these recent user interactions on an e-commerce store: {events_str}
+Available products: {json.dumps(PRODUCTS)}
+Predict their intent (e.g., 'BROWSING', 'COMPARING', 'SEARCHING') and suggest up to 3 product IDs they might be interested in based on elements they interacted with.
+Respond in valid JSON format ONLY: {{"intent": "intent_string", "suggested_product_ids": [id1, id2]}}
+"""
+            res = ai_model.generate_content(prompt).text
+            if "```json" in res: res = res.split("```json")[1].split("```")[0].strip()
+            elif "```" in res: res = res.split("```")[1].strip()
+            data = json.loads(res)
+            intent = data.get("intent", "BROWSING")
+            suggestions = data.get("suggested_product_ids", [])
+        except Exception as e:
+            print("AI Prediction error:", e)
+            hovers = [i for i in p.interactions if i.get('event_type') == 'hover']
+            max_h = max([h.get('data', {}).get('duration', 0) for h in hovers]) if hovers else 0
+            if max_h > 3000: intent = "COMPARING"
+
+    return {"intent": intent, "suggestions": suggestions}
 
 @app.post("/_/backend/chat")
 async def chat(c: Chat):
@@ -159,3 +196,20 @@ async def serve(request: Request, path: str):
 @app.on_event("startup")
 async def startup():
     init_db()
+    
+    from werkzeug.security import generate_password_hash
+    seed_users = [
+        ("test@aurashop.ai", "password123"),
+        ("oladapotimothy2016@gmail.com", "password123")
+    ]
+    
+    with get_db() as db:
+        for email, password in seed_users:
+            row = db.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
+            if not row:
+                db.execute(
+                    "INSERT INTO users (email, password_hash) VALUES (?, ?)",
+                    (email, generate_password_hash(password))
+                )
+                db.commit()
+                print(f"Seed user created: {email}")

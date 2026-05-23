@@ -7,6 +7,7 @@ const API_BASE = '/_/backend';
 
 export const useBehavioralTracking = () => {
   const [intent, setIntent] = useState('BROWSING');
+  const [suggestions, setSuggestions] = useState([]);
   const interactions = useRef([]);
   const lastScrollPos = useRef(0);
 
@@ -48,6 +49,9 @@ export const useBehavioralTracking = () => {
           interactions: eventsToSend
         });
         setIntent(response.data.intent);
+        if (response.data.suggestions && response.data.suggestions.length > 0) {
+          setSuggestions(response.data.suggestions);
+        }
       } catch (err) {
         console.error('Tracking failed', err);
         // Put events back if failed? Maybe too complex for now.
@@ -118,5 +122,5 @@ export const useBehavioralTracking = () => {
     };
   }, []);
 
-  return { intent, SESSION_ID };
+  return { intent, SESSION_ID, suggestions };
 };
