@@ -21,8 +21,8 @@ function Store({ cart, addToCart, removeFromCart }) {
   React.useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`/_/backend/products?limit=50&offset=${page * 50}`);
-        if (response.data.length < 50) setHasMore(false);
+        const response = await axios.get(`/_/backend/products?limit=15&offset=${page * 15}`);
+        if (response.data.length < 15) setHasMore(false);
         setProducts(prev => {
           const newProducts = response.data.filter(p => !prev.some(existing => existing.id === p.id));
           return [...prev, ...newProducts];

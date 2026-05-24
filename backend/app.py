@@ -53,8 +53,8 @@ def seed_products():
             adjectives = ["Neural", "Quantum", "Cyber", "Holo", "Plasma", "Aero", "Void", "Flux", "Neon", "Sonic", "Aura", "Prism", "Zenith", "Pulse", "Nova", "Stealth", "Orbit"]
             nouns = ["Drive", "Core", "Matrix", "Lens", "Suit", "Drone", "Pad", "Ring", "Projector", "Interface", "Watch", "Buds", "Hub", "Controller", "Key", "Lamp", "Chair"]
             products_to_insert = []
-            for i in range(1, 51):
-                name = f"{random.choice(adjectives)} {random.choice(nouns)} {random.randint(1, 99)}"
+            for i in range(1, 1001):
+                name = f"{random.choice(adjectives)} {random.choice(nouns)} {random.randint(1, 999)}"
                 desc = f"A state-of-the-art {name.lower()} with enhanced capabilities."
                 price = f"${random.randint(49, 4999)}"
                 image = f"https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80&sig={i}"
@@ -83,7 +83,7 @@ def seed_products():
                             cascade_create=True
                         ))
                     recombee_client.send(Batch(batch_reqs))
-                    print("Successfully synced 50 products to Recombee!")
+                    print("Successfully synced 1000 products to Recombee!")
                 except Exception as e:
                     print("Recombee sync error:", e)
 
