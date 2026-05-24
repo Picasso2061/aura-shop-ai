@@ -12,8 +12,17 @@ from pydantic import BaseModel, EmailStr
 from werkzeug.security import generate_password_hash, check_password_hash
 from contextlib import contextmanager
 from dotenv import load_dotenv
+from recombee_api_client.api_client import RecombeeClient, Region
+from recombee_api_client.api_requests import AddItemProperty, SetItemValues, Batch, AddDetailView, AddCartAddition, AddPurchase, RecommendItemsToUser, RecommendItemsToItem
+from recombee_api_client.exceptions import APIException
 
 load_dotenv()
+
+RECOMBEE_DB_ID = os.getenv("RECOMBEE_DB_ID")
+RECOMBEE_PRIVATE_TOKEN = os.getenv("RECOMBEE_PRIVATE_TOKEN")
+recombee_client = None
+if RECOMBEE_DB_ID and RECOMBEE_PRIVATE_TOKEN:
+    recombee_client = RecombeeClient(RECOMBEE_DB_ID, RECOMBEE_PRIVATE_TOKEN, region=Region.EU_WEST)
 
 # --- DATABASE LOGIC ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -52,6 +61,31 @@ def seed_products():
                 products_to_insert.append((name, desc, price, image))
             conn.executemany('INSERT INTO products (name, description, price, image) VALUES (?, ?, ?, ?)', products_to_insert)
             conn.commit()
+
+            if recombee_client:
+                try:
+                    recombee_client.send(AddItemProperty('name', 'string'))
+                    recombee_client.send(AddItemProperty('description', 'string'))
+                    recombee_client.send(AddItemProperty('price', 'string'))
+                    recombee_client.send(AddItemProperty('image', 'string'))
+                    
+                    rows = conn.execute('SELECT * FROM products').fetchall()
+                    batch_reqs = []
+                    for row in rows:
+                        batch_reqs.append(SetItemValues(
+                            str(row['id']),
+                            {
+                                'name': row['name'],
+                                'description': row['description'],
+                                'price': row['price'],
+                                'image': row['image']
+                            },
+                            cascade_create=True
+                        ))
+                    recombee_client.send(Batch(batch_reqs))
+                    print("Successfully synced 50 products to Recombee!")
+                except Exception as e:
+                    print("Recombee sync error:", e)
 
 # --- SCHEMAS ---
 class UserAuth(BaseModel):
@@ -134,10 +168,32 @@ async def get_products(limit: int = 50, offset: int = 0):
 @app.post("/_/backend/track")
 async def track(payload: TrackPayload):
     with get_db() as conn:
+        batch_reqs = []
         for ev in payload.events:
             conn.execute('INSERT INTO interactions (session_id, event_type, element_id, data) VALUES (?, ?, ?, ?)', 
                          (payload.session_id, ev.event_type, ev.element_id, json.dumps(ev.data)))
+            
+            if recombee_client and ev.element_id:
+                try:
+                    user_id = payload.session_id
+                    item_id = str(ev.element_id)
+                    if ev.event_type in ['view', 'click', 'hover']:
+                        batch_reqs.append(AddDetailView(user_id, item_id, cascade_create=True))
+                    elif ev.event_type == 'add_to_cart':
+                        batch_reqs.append(AddCartAddition(user_id, item_id, cascade_create=True))
+                    elif ev.event_type == 'purchase':
+                        batch_reqs.append(AddPurchase(user_id, item_id, cascade_create=True))
+                except Exception as e:
+                    pass
+
         conn.commit()
+        
+        if recombee_client and batch_reqs:
+            try:
+                recombee_client.send(Batch(batch_reqs))
+            except Exception as e:
+                print("Recombee batch track error:", e)
+                
     return {"status": "ok"}
 
 @app.post("/_/backend/predict")
@@ -145,34 +201,35 @@ async def predict(p: Prediction):
     intent = "BROWSING"
     suggestions = []
     
+    # 1. Intent prediction via Gemini or fallback
     if ai_model and p.interactions:
         try:
             events_str = json.dumps([{k: v for k, v in i.items() if k in ['event_type', 'element_id', 'data']} for i in p.interactions[-10:]])
-            prompt = f"""
-Analyze these recent user interactions on an e-commerce store: {events_str}
-Predict their intent (e.g., 'BROWSING', 'COMPARING', 'SEARCHING') and suggest up to 3 product IDs they might be interested in based on elements they interacted with. Assume valid IDs are between 1 and 50.
-Respond in valid JSON format ONLY: {{"intent": "intent_string", "suggested_product_ids": [id1, id2]}}
-"""
+            prompt = f"Analyze these user interactions: {events_str}. Predict their intent ('BROWSING', 'COMPARING', 'SEARCHING'). Respond in valid JSON format ONLY: {{\\\"intent\\\": \\\"intent_string\\\"}}"
             res = ai_model.generate_content(prompt).text
             if "```json" in res: res = res.split("```json")[1].split("```")[0].strip()
             elif "```" in res: res = res.split("```")[1].strip()
             data = json.loads(res)
             intent = data.get("intent", "BROWSING")
-            suggestions = data.get("suggested_product_ids", [])
         except Exception as e:
-            print("AI Prediction error:", e)
-            # Mock fallback
-            import random
-            hovers = [i for i in p.interactions if i.get('event_type') == 'hover']
-            max_h = max([h.get('data', {}).get('duration', 0) for h in hovers]) if hovers else 0
-            if max_h > 3000: intent = "COMPARING"
-            suggestions = [random.randint(1, 50) for _ in range(3)]
-    else:
-        # Mock fallback if no API key
+            print("AI Intent error:", e)
+            
+    # 2. Recommendations via Recombee
+    if recombee_client and p.interactions:
+        try:
+            session_id = p.interactions[-1].get('session_id', 'anonymous')
+            last_item_id = p.interactions[-1].get('element_id')
+            if p.interactions[-1].get('event_type') in ['view', 'click'] and last_item_id:
+                rec = recombee_client.send(RecommendItemsToItem(str(last_item_id), session_id, 3))
+            else:
+                rec = recombee_client.send(RecommendItemsToUser(session_id, 3))
+            suggestions = [int(r['id']) for r in rec['recomms']]
+        except Exception as e:
+            print("Recombee predict error:", e)
+            
+    # Fallback suggestions if Recombee fails or is disabled
+    if not suggestions:
         import random
-        hovers = [i for i in p.interactions if i.get('event_type') == 'hover']
-        max_h = max([h.get('data', {}).get('duration', 0) for h in hovers]) if hovers else 0
-        if max_h > 3000: intent = "COMPARING"
         suggestions = [random.randint(1, 50) for _ in range(3)]
 
     return {"intent": intent, "suggestions": suggestions}

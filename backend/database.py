@@ -3,6 +3,17 @@ import os
 from contextlib import contextmanager
 from typing import Optional, Dict, Any
 import random
+from dotenv import load_dotenv
+from recombee_api_client.api_client import RecombeeClient, Region
+from recombee_api_client.api_requests import AddItemProperty, SetItemValues, Batch
+
+load_dotenv()
+
+RECOMBEE_DB_ID = os.getenv("RECOMBEE_DB_ID")
+RECOMBEE_PRIVATE_TOKEN = os.getenv("RECOMBEE_PRIVATE_TOKEN")
+recombee_client = None
+if RECOMBEE_DB_ID and RECOMBEE_PRIVATE_TOKEN:
+    recombee_client = RecombeeClient(RECOMBEE_DB_ID, RECOMBEE_PRIVATE_TOKEN, region=Region.EU_WEST)
 
 # Resolve database path relative to this file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -91,6 +102,35 @@ def seed_products():
                 VALUES (?, ?, ?, ?)
             ''', products_to_insert)
             conn.commit()
+            
+            if recombee_client:
+                print("Syncing 1000 products to Recombee...")
+                try:
+                    recombee_client.send(AddItemProperty('name', 'string'))
+                    recombee_client.send(AddItemProperty('description', 'string'))
+                    recombee_client.send(AddItemProperty('price', 'string'))
+                    recombee_client.send(AddItemProperty('image', 'string'))
+                    
+                    rows = conn.execute('SELECT * FROM products').fetchall()
+                    
+                    # Batch in smaller chunks if needed, but 1000 is okay for Recombee Batch (limit is 10k)
+                    batch_reqs = []
+                    for row in rows:
+                        batch_reqs.append(SetItemValues(
+                            str(row['id']),
+                            {
+                                'name': row['name'],
+                                'description': row['description'],
+                                'price': row['price'],
+                                'image': row['image']
+                            },
+                            cascade_create=True
+                        ))
+                    recombee_client.send(Batch(batch_reqs))
+                    print("Recombee sync complete.")
+                except Exception as e:
+                    print("Recombee sync error:", e)
+                    
             print("Seeding complete.")
 
 def log_interaction(session_id: str, event_type: str, element_id: Optional[str], data: str):

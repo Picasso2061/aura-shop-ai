@@ -10,3 +10,4 @@ google-generativeai
 python-dotenv
 gunicorn
 mangum
+recombee-api-client
