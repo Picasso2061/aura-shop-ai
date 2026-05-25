@@ -76,7 +76,7 @@ const LandingPage = () => {
             </Link>
           ) : (
             <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-              <Link to="/login" style={{ color: '#111827', textDecoration: 'none', fontWeight: '600' }}>Sign In</Link>
+              <Link to="/login" style={{ background: '#111827', color: 'white', padding: '10px 24px', borderRadius: '16px', textDecoration: 'none', fontWeight: '600' }}>Sign In</Link>
               <Link to="/signup" style={{ 
                 background: 'var(--primary)', 
                 color: 'white', 

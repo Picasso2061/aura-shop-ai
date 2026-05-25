@@ -128,6 +128,17 @@ function Store({ cart, addToCart, removeFromCart }) {
             <button 
               className="purple-template-btn"
               onClick={() => setPage(prev => prev + 1)}
+              style={{
+                background: '#111827',
+                color: '#ffffff',
+                border: 'none',
+                padding: '14px 32px',
+                borderRadius: '12px',
+                fontWeight: '700',
+                fontSize: '1.1rem',
+                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+                cursor: 'pointer'
+              }}
             >
               Load More Products
             </button>
