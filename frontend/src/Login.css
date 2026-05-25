@@ -187,25 +187,26 @@
 
 .signin-button {
   width: 100%;
-  background: var(--primary);
-  color: white;
+  background: #4c1d95; /* Darker, high-contrast purple */
+  color: #ffffff;
   padding: 20px;
   border-radius: 16px;
-  border: none;
+  border: 2px solid #3b0764; /* Solid border to eliminate transparency feel */
   font-size: 1.1rem;
-  font-weight: 800;
+  font-weight: 900;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 10px 30px rgba(76, 29, 149, 0.4);
   margin-top: 10px;
   position: relative;
   overflow: hidden;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .signin-button:hover {
   transform: translateY(-4px);
-  box-shadow: 0 15px 40px rgba(124, 58, 237, 0.5);
-  filter: brightness(1.1);
+  box-shadow: 0 15px 40px rgba(76, 29, 149, 0.6);
+  background: #3b0764;
 }
 
 .signin-button:active {
