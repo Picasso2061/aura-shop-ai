@@ -50,15 +50,15 @@ def seed_products():
     with get_db() as conn:
         count = conn.execute('SELECT COUNT(*) as count FROM products').fetchone()['count']
         if count == 0:
-            adjectives = ["Modern", "Classic", "Minimalist", "Rustic", "Smart", "Eco-friendly", "Premium", "Compact", "Ergonomic", "Luxury", "Sleek", "Cozy", "Elegant", "Vintage", "Industrial", "Bohemian", "Chic"]
-            nouns = ["Sofa", "Chair", "Table", "Bed", "Desk", "Lamp", "Clock", "Plant", "Mirror", "Vase", "Mug", "Book", "Candle", "Pillow", "Rug"]
+            adjectives = ["Mini", "Portable", "Cute", "Silicone", "LED", "Wireless", "Multifunctional", "Foldable", "Electric", "Magic", "Luminous", "Reusable", "Waterproof", "Adjustable", "Creative", "Smart"]
+            nouns = ["Fan", "Phone", "Toy", "Bottle", "Brush", "Box", "Charger", "Light", "Socks", "Bag", "Hat", "Pen", "Ring", "Glasses", "Watch", "Mug", "Keychain"]
             products_to_insert = []
             for i in range(1, 1001):
                 adj = random.choice(adjectives)
                 noun = random.choice(nouns)
                 name = f"{adj} {noun}"
-                desc = f"A high-quality, {name.lower()} perfect for your home."
-                price = f"${random.randint(19, 1499)}"
+                desc = f"Amazing {name.lower()} with free shipping and extreme discount!"
+                price = f"${random.uniform(0.99, 29.99):.2f}"
                 
                 query = noun.lower().replace(" ", ",")
                 image = f"https://loremflickr.com/600/400/{query}?lock={i}"
