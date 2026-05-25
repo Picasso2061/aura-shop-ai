@@ -61,11 +61,12 @@ function Store({ cart, addToCart, removeFromCart }) {
         
         <div style={{ position: 'absolute', left: '40px', top: '40px', display: 'flex', gap: '15px' }}>
           <button 
+            className="purple-template-btn"
             onClick={() => {
               localStorage.removeItem('user');
               navigate('/login');
             }}
-            style={{ background: 'var(--primary)', border: 'none', color: 'white', padding: '10px 20px', borderRadius: '12px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 'bold' }}
+            style={{ padding: '10px 20px', fontSize: '0.9rem' }}
           >
             Sign Out
           </button>
@@ -125,9 +126,8 @@ function Store({ cart, addToCart, removeFromCart }) {
         {hasMore && (
           <div style={{ textAlign: 'center', marginTop: '40px' }}>
             <button 
-              className="buy-btn"
+              className="purple-template-btn"
               onClick={() => setPage(prev => prev + 1)}
-              style={{ background: 'var(--primary)', padding: '15px 30px', fontSize: '1.1rem', cursor: 'pointer', borderRadius: '50px', border: 'none', color: 'white', fontWeight: 'bold' }}
             >
               Load More Products
             </button>

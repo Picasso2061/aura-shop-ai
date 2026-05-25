@@ -515,6 +515,25 @@ html {
   background: var(--accent);
 }
 
+.purple-template-btn {
+  background: var(--primary);
+  color: white;
+  padding: 15px 30px;
+  border-radius: 50px;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+}
+
+.purple-template-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(124, 58, 237, 0.5);
+  background: var(--accent);
+}
+
 .checkout-page {
   min-height: 100vh;
   padding: 40px 60px;

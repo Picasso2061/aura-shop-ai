@@ -54,10 +54,14 @@ def seed_products():
             nouns = ["Sofa", "Dining Table", "Blender", "Coffee Maker", "Toaster", "Microwave", "Vacuum Cleaner", "Air Purifier", "Lamp", "Rug", "Bookshelf", "Bed Frame", "Mattress", "Washing Machine", "Refrigerator", "Desk", "Office Chair"]
             products_to_insert = []
             for i in range(1, 1001):
-                name = f"{random.choice(adjectives)} {random.choice(nouns)}"
+                adj = random.choice(adjectives)
+                noun = random.choice(nouns)
+                name = f"{adj} {noun}"
                 desc = f"A high-quality, {name.lower()} perfect for your home."
                 price = f"${random.randint(19, 1499)}"
-                image = f"https://loremflickr.com/600/400/household,furniture,appliances?lock={i}"
+                
+                query = noun.lower().replace(" ", ",")
+                image = f"https://loremflickr.com/600/400/{query}?lock={i}"
                 products_to_insert.append((name, desc, price, image))
             conn.executemany('INSERT INTO products (name, description, price, image) VALUES (?, ?, ?, ?)', products_to_insert)
             conn.commit()
