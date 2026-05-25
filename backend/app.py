@@ -50,14 +50,14 @@ def seed_products():
     with get_db() as conn:
         count = conn.execute('SELECT COUNT(*) as count FROM products').fetchone()['count']
         if count == 0:
-            adjectives = ["Neural", "Quantum", "Cyber", "Holo", "Plasma", "Aero", "Void", "Flux", "Neon", "Sonic", "Aura", "Prism", "Zenith", "Pulse", "Nova", "Stealth", "Orbit"]
-            nouns = ["Drive", "Core", "Matrix", "Lens", "Suit", "Drone", "Pad", "Ring", "Projector", "Interface", "Watch", "Buds", "Hub", "Controller", "Key", "Lamp", "Chair"]
+            adjectives = ["Modern", "Classic", "Minimalist", "Rustic", "Smart", "Eco-friendly", "Premium", "Compact", "Ergonomic", "Luxury", "Sleek", "Cozy", "Elegant", "Vintage", "Industrial", "Bohemian", "Chic"]
+            nouns = ["Sofa", "Dining Table", "Blender", "Coffee Maker", "Toaster", "Microwave", "Vacuum Cleaner", "Air Purifier", "Lamp", "Rug", "Bookshelf", "Bed Frame", "Mattress", "Washing Machine", "Refrigerator", "Desk", "Office Chair"]
             products_to_insert = []
             for i in range(1, 1001):
-                name = f"{random.choice(adjectives)} {random.choice(nouns)} {random.randint(1, 999)}"
-                desc = f"A state-of-the-art {name.lower()} with enhanced capabilities."
-                price = f"${random.randint(49, 4999)}"
-                image = f"https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80&sig={i}"
+                name = f"{random.choice(adjectives)} {random.choice(nouns)}"
+                desc = f"A high-quality, {name.lower()} perfect for your home."
+                price = f"${random.randint(19, 1499)}"
+                image = f"https://loremflickr.com/600/400/household,furniture,appliances?lock={i}"
                 products_to_insert.append((name, desc, price, image))
             conn.executemany('INSERT INTO products (name, description, price, image) VALUES (?, ?, ?, ?)', products_to_insert)
             conn.commit()
