@@ -51,7 +51,7 @@ def seed_products():
         count = conn.execute('SELECT COUNT(*) as count FROM products').fetchone()['count']
         if count == 0:
             adjectives = ["Modern", "Classic", "Minimalist", "Rustic", "Smart", "Eco-friendly", "Premium", "Compact", "Ergonomic", "Luxury", "Sleek", "Cozy", "Elegant", "Vintage", "Industrial", "Bohemian", "Chic"]
-            nouns = ["Sofa", "Dining Table", "Blender", "Coffee Maker", "Toaster", "Microwave", "Vacuum Cleaner", "Air Purifier", "Lamp", "Rug", "Bookshelf", "Bed Frame", "Mattress", "Washing Machine", "Refrigerator", "Desk", "Office Chair"]
+            nouns = ["Sofa", "Chair", "Table", "Bed", "Desk", "Lamp", "Clock", "Plant", "Mirror", "Vase", "Mug", "Book", "Candle", "Pillow", "Rug"]
             products_to_insert = []
             for i in range(1, 1001):
                 adj = random.choice(adjectives)
