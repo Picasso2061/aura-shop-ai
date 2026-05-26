@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import heroImage from '../assets/hero.png';
+import PreStoreChat from './PreStoreChat';
 
 const LandingPage = () => {
   const user = JSON.parse(localStorage.getItem('user'));
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
     <div className="landing-page" style={{ 
@@ -63,17 +65,18 @@ const LandingPage = () => {
           <a href="#intelligence" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '500' }}>Intelligence</a>
           
           {user ? (
-            <Link to="/store" className="glass-card" style={{ 
+            <button onClick={() => setIsChatOpen(true)} className="glass-card" style={{ 
               padding: '12px 28px', 
               color: 'var(--primary)', 
               textDecoration: 'none', 
               fontWeight: '700',
               borderRadius: '16px',
               border: '1px solid var(--primary)',
-              background: 'transparent'
+              background: 'transparent',
+              cursor: 'pointer'
             }}>
               Launch Terminal
-            </Link>
+            </button>
           ) : (
             <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
               <Link to="/login" style={{ background: '#111827', color: 'white', padding: '10px 24px', borderRadius: '16px', textDecoration: 'none', fontWeight: '600' }}>Sign In</Link>
@@ -155,17 +158,19 @@ const LandingPage = () => {
             }}>
               Begin Your Journey
             </Link>
-            <Link to="/store" className="glass-card" style={{ 
+            <button onClick={() => setIsChatOpen(true)} className="glass-card" style={{ 
               padding: '22px 52px', 
               color: '#111827', 
               textDecoration: 'none', 
               fontSize: '1.25rem', 
               fontWeight: '700',
               borderRadius: '20px',
-              border: '1px solid #e5e7eb'
+              border: '1px solid #e5e7eb',
+              cursor: 'pointer',
+              background: 'transparent'
             }}>
               Explore Catalog
-            </Link>
+            </button>
           </div>
         </div>
         
@@ -282,6 +287,8 @@ const LandingPage = () => {
           Built for the next generation of digital commerce.
         </div>
       </footer>
+      
+      <PreStoreChat isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </div>
   );
 };

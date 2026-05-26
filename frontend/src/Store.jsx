@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useBehavioralTracking } from './hooks/useBehavioralTracking';
 import ProductCard from './components/ProductCard';
@@ -9,6 +9,7 @@ import MindAIAssistant from './components/MindAIAssistant';
 
 function Store({ cart, addToCart, removeFromCart }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { intent, SESSION_ID, suggestions: trackedSuggestions } = useBehavioralTracking();
   const [suggestions, setSuggestions] = useState([]);
   const [lastAdded, setLastAdded] = useState(null);
@@ -35,10 +36,12 @@ function Store({ cart, addToCart, removeFromCart }) {
   }, [page]);
 
   React.useEffect(() => {
-    if (trackedSuggestions && trackedSuggestions.length > 0) {
+    if (location.state && location.state.suggestions) {
+      setSuggestions(location.state.suggestions);
+    } else if (trackedSuggestions && trackedSuggestions.length > 0) {
       setSuggestions(trackedSuggestions);
     }
-  }, [trackedSuggestions]);
+  }, [trackedSuggestions, location.state]);
 
   const handleAddToCart = (product) => {
     addToCart(product);
@@ -156,10 +159,10 @@ function Store({ cart, addToCart, removeFromCart }) {
           alignItems: 'center', 
           justifyContent: 'center' 
         }}>
-           <div style={{ fontSize: '4rem', marginBottom: '20px' }}>✨</div>
-           <h2 style={{ fontSize: '3rem', marginBottom: '20px', fontWeight: '900' }}>What are you looking for today?</h2>
+           <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🛒</div>
+           <h2 style={{ fontSize: '3rem', marginBottom: '20px', fontWeight: '900' }}>Loading your personalized catalog...</h2>
            <p style={{ fontSize: '1.3rem', opacity: 0.7, maxWidth: '600px', lineHeight: '1.6' }}>
-             Tell our MindAI Concierge what you'd like, and we will bring the most relevant products directly to you.
+             Just a moment while we process your preferences and fetch the best products for you.
            </p>
         </div>
       )}
