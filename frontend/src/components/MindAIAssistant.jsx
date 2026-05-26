@@ -4,7 +4,7 @@ import axios from 'axios';
 const API_BASE = '/_/backend';
 
 const MindAIAssistant = ({ sessionId, currentIntent, onSuggestions }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [messages, setMessages] = useState([
     { role: 'bot', content: 'Hi! I am MindAI. I noticed you are browsing our latest tech. Anything specific you are looking for?' }
   ]);

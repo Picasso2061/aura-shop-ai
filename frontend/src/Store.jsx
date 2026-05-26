@@ -92,59 +92,77 @@ function Store({ cart, addToCart, removeFromCart }) {
         Intent: {intent}
       </div>
 
-      {recommendedProducts.length > 0 && (
-        <section className="suggestions-section glass-card">
-          <div className="suggestions-header">
-            <span className="ai-badge">AI Optimized</span>
-            <h2>Tailored for your {intent.toLowerCase().replace('_', ' ')}</h2>
-          </div>
-          <div className="product-grid suggestions">
-            {recommendedProducts.map(product => (
-              <ProductCard 
-                key={`rec-${product.id}`} 
-                product={product} 
-                onAddToCart={() => handleAddToCart(product)}
-                onViewDetails={() => setSelectedProduct(product)}
-              />
-            ))}
-          </div>
-        </section>
-      )}
+      {recommendedProducts.length > 0 ? (
+        <>
+          <section className="suggestions-section glass-card">
+            <div className="suggestions-header">
+              <span className="ai-badge">AI Optimized</span>
+              <h2>Tailored for your {intent.toLowerCase().replace('_', ' ')}</h2>
+            </div>
+            <div className="product-grid suggestions">
+              {recommendedProducts.map(product => (
+                <ProductCard 
+                  key={`rec-${product.id}`} 
+                  product={product} 
+                  onAddToCart={() => handleAddToCart(product)}
+                  onViewDetails={() => setSelectedProduct(product)}
+                />
+              ))}
+            </div>
+          </section>
 
-      <section style={{ padding: '0 40px' }}>
-        <h2 style={{ opacity: 0.5, fontSize: '1.2rem', marginBottom: '20px' }}>Explore Catalog</h2>
-        <div className="product-grid" style={{ padding: 0 }}>
-          {products.map(product => (
-            <ProductCard 
-              key={product.id} 
-              product={product} 
-              onAddToCart={() => handleAddToCart(product)}
-              onViewDetails={() => setSelectedProduct(product)}
-            />
-          ))}
+          <section style={{ padding: '0 40px', marginTop: '40px' }}>
+            <h2 style={{ opacity: 0.5, fontSize: '1.2rem', marginBottom: '20px' }}>Explore Catalog</h2>
+            <div className="product-grid" style={{ padding: 0 }}>
+              {products.map(product => (
+                <ProductCard 
+                  key={product.id} 
+                  product={product} 
+                  onAddToCart={() => handleAddToCart(product)}
+                  onViewDetails={() => setSelectedProduct(product)}
+                />
+              ))}
+            </div>
+            {hasMore && (
+              <div style={{ textAlign: 'center', marginTop: '40px' }}>
+                <button 
+                  className="purple-template-btn"
+                  onClick={() => setPage(prev => prev + 1)}
+                  style={{
+                    background: '#111827',
+                    color: '#ffffff',
+                    border: 'none',
+                    padding: '14px 32px',
+                    borderRadius: '12px',
+                    fontWeight: '700',
+                    fontSize: '1.1rem',
+                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Load More Products
+                </button>
+              </div>
+            )}
+          </section>
+        </>
+      ) : (
+        <div style={{ 
+          textAlign: 'center', 
+          padding: '100px 20px', 
+          minHeight: '50vh', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center' 
+        }}>
+           <div style={{ fontSize: '4rem', marginBottom: '20px' }}>✨</div>
+           <h2 style={{ fontSize: '3rem', marginBottom: '20px', fontWeight: '900' }}>What are you looking for today?</h2>
+           <p style={{ fontSize: '1.3rem', opacity: 0.7, maxWidth: '600px', lineHeight: '1.6' }}>
+             Tell our MindAI Concierge what you'd like, and we will bring the most relevant products directly to you.
+           </p>
         </div>
-        {hasMore && (
-          <div style={{ textAlign: 'center', marginTop: '40px' }}>
-            <button 
-              className="purple-template-btn"
-              onClick={() => setPage(prev => prev + 1)}
-              style={{
-                background: '#111827',
-                color: '#ffffff',
-                border: 'none',
-                padding: '14px 32px',
-                borderRadius: '12px',
-                fontWeight: '700',
-                fontSize: '1.1rem',
-                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
-                cursor: 'pointer'
-              }}
-            >
-              Load More Products
-            </button>
-          </div>
-        )}
-      </section>
+      )}
 
       <MindAIAssistant 
         sessionId={SESSION_ID} 
