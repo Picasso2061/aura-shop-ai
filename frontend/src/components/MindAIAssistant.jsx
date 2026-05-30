@@ -66,6 +66,30 @@ const MindAIAssistant = ({ sessionId, currentIntent, onSuggestions }) => {
               SEND
             </button>
           </div>
+          <div style={{ marginTop: '10px' }}>
+            <button 
+              onClick={() => { 
+                const skipMsg = { role: 'user', content: 'Skip to recommendations. Suggest a bundle now.' };
+                setMessages(prev => [...prev, skipMsg]);
+                setLoading(true);
+                axios.post(`${API_BASE}/chat`, {
+                  session_id: sessionId,
+                  message: 'Skip to recommendations. Suggest a bundle now.',
+                  intent: currentIntent,
+                  history: messages.slice(-5)
+                }).then(res => {
+                  setMessages(prev => [...prev, { role: 'bot', content: res.data.response }]);
+                  if (res.data.suggestions) onSuggestions(res.data.suggestions);
+                  setLoading(false);
+                }).catch(() => {
+                  setMessages(prev => [...prev, { role: 'bot', content: 'Error skipping.' }]);
+                  setLoading(false);
+                });
+              }} 
+              style={{ width: '100%', background: 'transparent', border: '1px solid var(--glass-border)', borderRadius: '8px', padding: '8px', color: 'var(--text-color, gray)', cursor: 'pointer', fontSize: '0.9rem' }}>
+              Skip to Recommendations
+            </button>
+          </div>
         </div>
       )}
       <div className="ai-bubble" onClick={() => setIsOpen(!isOpen)}>

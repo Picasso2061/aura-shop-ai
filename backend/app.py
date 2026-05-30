@@ -252,7 +252,22 @@ async def chat(c: Chat):
             "suggestions": suggestions
         }
     
-    prompt = f"User is {c.intent}. They said: {c.message}. Respond as MindAI shopping assistant in JSON: {{'message': 'text', 'suggested_product_ids': []}}"
+    history_str = json.dumps(c.history) if c.history else "None"
+    prompt = f"""
+    You are an expert Personal Shopper and AI requirements-gatherer for the Aura Shop.
+    Your job is to understand exactly what custom product bundle the user wants.
+    When a user describes an idea, ask intelligent follow-up questions ONE AT A TIME to gather requirements (e.g. budget, colors, specific features).
+    Do NOT ask more than one question at a time.
+    CRITICAL: You must cap your questions to a maximum of 3. If you have already asked 3 questions, or if the user asks to skip, you MUST immediately stop asking questions and suggest a bundle of products.
+    Once you have enough information (or if they are already clear), suggest a bundle of products.
+    Chat History: {history_str}
+    The user said: "{c.message}".
+    Respond in valid JSON format ONLY:
+    {{
+      "message": "your conversational response or question",
+      "suggested_product_ids": []
+    }}
+    """
     try:
         res = ai_model.generate_content(prompt).text
         if "```json" in res: res = res.split("```json")[1].split("```")[0].strip()

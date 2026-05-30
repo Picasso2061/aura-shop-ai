@@ -98,9 +98,18 @@ function Store({ cart, addToCart, removeFromCart }) {
       {recommendedProducts.length > 0 ? (
         <>
           <section className="suggestions-section glass-card">
-            <div className="suggestions-header">
-              <span className="ai-badge">AI Optimized</span>
-              <h2>Tailored for your {intent.toLowerCase().replace('_', ' ')}</h2>
+            <div className="suggestions-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <span className="ai-badge">AI Optimized</span>
+                <h2>Tailored for your {intent.toLowerCase().replace('_', ' ')}</h2>
+              </div>
+              <button 
+                className="purple-template-btn"
+                onClick={() => { recommendedProducts.forEach(p => handleAddToCart(p)); }}
+                style={{ padding: '10px 20px', fontSize: '1rem', background: 'var(--primary)', color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer' }}
+              >
+                Add Bundle to Cart
+              </button>
             </div>
             <div className="product-grid suggestions">
               {recommendedProducts.map(product => (
